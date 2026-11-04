@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from accio_api.db import Database, get_db
-from accio_api.gemini import QueryParser, get_parser
+from accio_api.gemini import QueryParser, breaker, get_parser
 from accio_api.schemas import Interpreted, ProductDetail, ProductSummary, SearchResponse
 
 router = APIRouter(prefix="/api")
@@ -28,14 +28,19 @@ async def search(
     if mode == "auto" and query:
         if parser is None:
             fallback_reason = "no_key"
+        elif not breaker.available():
+            fallback_reason = "cooldown"  # 방금 Gemini 가 연달아 늦어 잠시 쉬는 중
         else:
             try:
                 parsed = await parser.parse(query)
             except TimeoutError:
+                breaker.failure()
                 fallback_reason = "timeout"
             except Exception:  # noqa: BLE001 — 해석이 어떤 이유로 실패해도 검색은 계속돼야 한다
+                breaker.failure()
                 fallback_reason = "error"
             else:
+                breaker.success()
                 # 종류는 필터로(다른 종류가 섞이지 않게), 종류 이름 + 특징은 구절 그대로 점수로
                 rows = await db.search(
                     query,

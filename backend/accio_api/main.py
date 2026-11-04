@@ -1,6 +1,7 @@
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from accio_api.chat import router as chat_router
 from accio_api.config import get_settings
 from accio_api.db import DatabaseError
 from accio_api.products import router as products_router
@@ -24,6 +25,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title=get_settings().app_name)
     app.include_router(api)
     app.include_router(products_router)
+    app.include_router(chat_router)
     app.add_exception_handler(DatabaseError, database_error)
     return app
 

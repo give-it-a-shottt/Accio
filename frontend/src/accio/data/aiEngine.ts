@@ -1,5 +1,6 @@
 // 목업 AI — 서버 없이 질문 유형(의도)을 알아듣고 상품 데이터로 답한다.
 // 실제 서비스(v1)는 백엔드 LLM 이 하던 일을, 포트폴리오에서는 규칙으로 흉내 낸다.
+import type { Interpreted } from '../api'
 import { ALL_PRODUCTS, KIMCHI_STEW_GROUPS, PRODUCTS, type Product } from './catalog'
 import { formatWon } from '../utils/format'
 import { accioHref } from '../routes'
@@ -17,7 +18,30 @@ export interface AiReply {
   confirm?: { productIds: string[] }
   chips?: string[]
   link?: { label: string; href: string }
+  /** AI 채팅(API)이 이해한 검색 조건 — 다음 질문이 이어받는다 */
+  interpreted?: Interpreted
 }
+
+/**
+ * 이 질문을 목업(이 파일)으로 답할지 — 재료 한 번에 · 담기 · 주문 조회 · 재구매 · 사진 · 결과 다시 정렬처럼
+ * 서버에 아직 없는 기능만 목업으로, 나머지 상품 찾기는 AI 채팅 API 로 보낸다.
+ */
+export function isLocalIntent(question: string, history: AiReply[]) {
+  const q = question.trim()
+  const prev = lastResult(history)
+  if (/김치찌개|재료/.test(q)) return true
+  if (/담아|담기|담을래|주문해줘/.test(q) && !/또|지난번/.test(q)) return true
+  if (prev && /저렴한 걸로|싼 걸로|싸게|리뷰 많은|인기순/.test(q)) return true
+  if (prev && prev.groups.length > 1 && /고기 빼/.test(q)) return true
+  if (prev && /인분/.test(q)) return true
+  if (/주문.*(어디|언제|배송)|어디까지|배송 조회|또|재구매|지난번/.test(q)) return true
+  if (/배송 빠르/.test(q)) return true
+  if (/그냥 상품|사진|이미지/.test(q)) return true
+  return false
+}
+
+/** 이 대화에서 마지막으로 AI 가 쓴 검색 조건 */
+export const lastInterpreted = (history: AiReply[]) => [...history].reverse().find((r) => r.interpreted)?.interpreted ?? null
 
 /** 질문을 낱말로 나눌 때 뺄 말(조사·요청 표현) */
 const STOP_WORDS = ['찾아줘', '추천해줘', '추천', '보여줘', '알려줘', '찾아', '줘', '좀', '거', '것', '걸', '쓸', '갈', '때', '하는', '있는', '같은', '사고', '싶어', '가서']

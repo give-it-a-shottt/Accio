@@ -5,6 +5,7 @@
 """
 
 import asyncio
+import time
 from collections import OrderedDict
 from typing import Literal
 
@@ -36,6 +37,32 @@ ProductType = Literal[tuple(k for keywords in CATALOG.values() for k in keywords
 
 PARSE_TIMEOUT = 6.0
 CACHE_SIZE = 500
+
+
+class Breaker:
+    """Gemini 가 연달아 늦거나 실패하면 잠시 부르지 않는다(차단기).
+    서비스가 느려진 동안 사용자가 질문마다 시간 초과(6초)를 기다리지 않고 바로 키워드 · 규칙 검색으로 답을 받게."""
+
+    def __init__(self, threshold: int = 2, cooldown: float = 60.0) -> None:
+        self.threshold, self.cooldown = threshold, cooldown
+        self.failures = 0
+        self.until = 0.0
+
+    def available(self) -> bool:
+        return time.monotonic() >= self.until
+
+    def failure(self) -> None:
+        self.failures += 1
+        if self.failures >= self.threshold:
+            self.until = time.monotonic() + self.cooldown
+            self.failures = 0
+
+    def success(self) -> None:
+        self.failures = 0
+
+
+# 서버(서버리스 인스턴스) 하나에 하나 — 헤더 검색과 AI 채팅이 함께 쓴다
+breaker = Breaker()
 
 
 class ParsedQuery(BaseModel):

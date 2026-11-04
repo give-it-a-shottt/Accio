@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
-import { respond, respondToImage, type AiReply } from '../data/aiEngine'
+import { chatSearch } from '../api'
+import { isLocalIntent, lastInterpreted, respond, respondToImage, type AiReply } from '../data/aiEngine'
 import { isLoggedIn } from './useAuth'
 import { latestOrder } from './useOrders'
 
@@ -96,23 +97,49 @@ const updateActive = (change: (c: Conversation) => Conversation) => updateConver
 const aiReplies = (c: Conversation | undefined) =>
   (c?.messages ?? []).flatMap((m) => (m.role === 'ai' ? [m.reply] : []))
 
+/** 답을 대화에 붙인다 — 안내 카드는 바로 보이고, 일반 답은 글자가 흘러나온다 */
+function deliver(targetId: string | null, reply: AiReply, notice?: AiNotice) {
+  const id = uid()
+  state = { ...state, thinking: false, streamingId: notice ? state.streamingId : id }
+  updateConversation(targetId, (c) => ({
+    ...c,
+    updatedAt: Date.now(),
+    messages: [...c.messages, { id, role: 'ai', reply, notice, confirmState: reply.confirm ? 'pending' : undefined }],
+  }))
+}
+
 function answer(makeReply: (history: AiReply[]) => AiReply, notice?: AiNotice) {
   // 기다리는 사이 다른 대화를 열어도 답은 질문한 대화에 붙인다
   const targetId = state.activeId
   write({ ...state, thinking: true })
-  // 실제 AI 처럼 잠깐 생각하는 틈을 둔다
+  // 목업 답은 실제 AI 처럼 잠깐 생각하는 틈을 둔다
   window.setTimeout(() => {
     const target = state.conversations.find((c) => c.id === targetId)
-    const reply = makeReply(aiReplies(target))
-    const id = uid()
-    // 안내 카드는 바로 보이고, 일반 답은 글자가 흘러나온다
-    state = { ...state, thinking: false, streamingId: notice ? state.streamingId : id }
-    updateConversation(targetId, (c) => ({
-      ...c,
-      updatedAt: Date.now(),
-      messages: [...c.messages, { id, role: 'ai', reply, notice, confirmState: reply.confirm ? 'pending' : undefined }],
-    }))
+    deliver(targetId, makeReply(aiReplies(target)), notice)
   }, 650)
+}
+
+/** AI 채팅 API(Gemini 해석 → 생성 상품 검색 → 답변). 서버가 안 되면 목업 답으로 */
+function answerWithAi(question: string) {
+  const targetId = state.activeId
+  write({ ...state, thinking: true })
+  const history = aiReplies(state.conversations.find((c) => c.id === targetId))
+  chatSearch(question, lastInterpreted(history))
+    .then((result) => {
+      const reply: AiReply = {
+        text: result.reply,
+        chips: result.chips,
+        interpreted: result.interpreted ?? undefined,
+        result: result.products.length
+          ? { title: '검색 결과', badge: `${result.total}개`, groups: [{ label: '전체', products: result.products }] }
+          : undefined,
+      }
+      deliver(targetId, reply)
+    })
+    .catch(() => {
+      const fallback = respond(question, history, latestOrder())
+      deliver(targetId, { ...fallback, text: ['AI 서버에 연결하지 못해 예시 상품에서 찾았어요.', ...fallback.text] })
+    })
 }
 
 // ── 무료 AI 사용량 한도(429 흉내) — 1분에 6번까지 묻고, 넘으면 가장 오래된 질문 1분 뒤까지 잠근다 ──
@@ -165,7 +192,9 @@ export const chatActions = {
       answer(() => ({ text: [] }), { kind: 'limit', until, question })
       return
     }
-    answer((history) => respond(question, history, latestOrder()))
+    const history = aiReplies(state.conversations.find((c) => c.id === state.activeId))
+    if (isLocalIntent(question, history)) answer((h) => respond(question, h, latestOrder()))
+    else answerWithAi(question)
   },
   /** 사진 첨부 — 글 없이 보내도 된다 */
   sendImage(count: number, text = '') {

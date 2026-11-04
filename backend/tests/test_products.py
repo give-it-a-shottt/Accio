@@ -55,6 +55,14 @@ class FakeParser:
         return self.result
 
 
+@pytest.fixture(autouse=True)
+def fresh_breaker():
+    from accio_api.gemini import breaker
+
+    breaker.failures, breaker.until = 0, 0.0
+    yield
+
+
 @pytest.fixture
 def fake():
     db = FakeDb()

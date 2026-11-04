@@ -18,7 +18,7 @@ export interface SearchResult {
   mode: 'keyword' | 'parsed' | 'hybrid'
   interpreted: Interpreted | null
   /** AI 해석을 시도했다가 검색어 그대로 찾았을 때 이유 */
-  fallbackReason: 'timeout' | 'error' | 'no_key' | null
+  fallbackReason: 'timeout' | 'error' | 'no_key' | 'cooldown' | null
   total: number
   products: Product[]
 }
@@ -50,6 +50,34 @@ export async function searchProducts(query: string, signal?: AbortSignal, exact 
   const mode = exact ? '&mode=keyword' : ''
   const result = await getJson<SearchResult>(`/search?q=${encodeURIComponent(query)}&limit=60${mode}`, signal)
   // 장바구니 · 찜 · 최근 본 상품이 나중에 id 로 찾을 수 있게 기억해 둔다
+  rememberProducts(result.products)
+  return result
+}
+
+export interface ChatResult {
+  reply: string[]
+  chips: string[]
+  /** search = AI 가 해석해 찾음, keyword = AI 가 늦어 규칙으로 찾음, chat = 쇼핑과 무관한 말 */
+  kind: 'search' | 'keyword' | 'chat'
+  interpreted: Interpreted | null
+  total: number
+  products: Product[]
+}
+
+/** AI 채팅 — previous 는 이 대화에서 마지막으로 쓴 검색 조건('5만원 이하로' 같은 이어지는 말을 합친다) */
+export async function chatSearch(message: string, previous: Interpreted | null) {
+  let response: Response
+  try {
+    response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, previous }),
+    })
+  } catch {
+    throw new ApiError('서버에 연결하지 못했어요', 0)
+  }
+  if (!response.ok) throw new ApiError(`API ${response.status}`, response.status)
+  const result = (await response.json()) as ChatResult
   rememberProducts(result.products)
   return result
 }
