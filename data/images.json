@@ -1,0 +1,332 @@
+{
+ "경량 패딩": [
+  {
+   "src": "/products/puffer-jacket-1.webp",
+   "alt": "경량 패딩 상품 이미지"
+  }
+ ],
+ "울 코트": [
+  {
+   "src": "/products/wool-coat-1.webp",
+   "alt": "울 코트 상품 이미지"
+  }
+ ],
+ "니트": [
+  {
+   "src": "/products/knit-sweater-1.webp",
+   "alt": "니트 상품 이미지"
+  }
+ ],
+ "방수 운동화": [
+  {
+   "src": "/products/sneakers-1.webp",
+   "alt": "방수 운동화 상품 이미지"
+  }
+ ],
+ "트레킹 자켓": [
+  {
+   "src": "/products/hiking-jacket-1.webp",
+   "alt": "트레킹 자켓 상품 이미지"
+  }
+ ],
+ "수분크림": [
+  {
+   "src": "/products/face-cream-jar-1.webp",
+   "alt": "수분크림 상품 이미지"
+  }
+ ],
+ "선크림": [
+  {
+   "src": "/products/sunscreen-bottle-1.webp",
+   "alt": "선크림 상품 이미지"
+  }
+ ],
+ "립밤": [
+  {
+   "src": "/products/lip-balm-1.webp",
+   "alt": "립밤 상품 이미지"
+  }
+ ],
+ "클렌징폼": [
+  {
+   "src": "/products/facial-cleanser-1.webp",
+   "alt": "클렌징폼 상품 이미지"
+  }
+ ],
+ "핸드크림": [
+  {
+   "src": "/products/hand-cream-tube-1.webp",
+   "alt": "핸드크림 상품 이미지"
+  }
+ ],
+ "샤인머스캣": [
+  {
+   "src": "/products/green-grapes-1.webp",
+   "alt": "샤인머스캣 상품 이미지"
+  }
+ ],
+ "사과": [
+  {
+   "src": "/products/red-apples-1.webp",
+   "alt": "사과 상품 이미지"
+  }
+ ],
+ "밀키트": [
+  {
+   "src": "/products/meal-kit-ingredients-1.webp",
+   "alt": "밀키트 상품 이미지"
+  }
+ ],
+ "견과류": [
+  {
+   "src": "/products/mixed-nuts-1.webp",
+   "alt": "견과류 상품 이미지"
+  }
+ ],
+ "닭가슴살": [
+  {
+   "src": "/products/grilled-chicken-breast-1.webp",
+   "alt": "닭가슴살 상품 이미지"
+  }
+ ],
+ "화장지": [
+  {
+   "src": "/products/toilet-paper-rolls-1.webp",
+   "alt": "화장지 상품 이미지"
+  }
+ ],
+ "세탁세제": [
+  {
+   "src": "/products/laundry-detergent-1.webp",
+   "alt": "세탁세제 상품 이미지"
+  }
+ ],
+ "극세사 이불": [
+  {
+   "src": "/products/cozy-blanket-bed-1.webp",
+   "alt": "극세사 이불 상품 이미지"
+  }
+ ],
+ "수건": [
+  {
+   "src": "/products/folded-towels-1.webp",
+   "alt": "수건 상품 이미지"
+  }
+ ],
+ "디퓨저": [
+  {
+   "src": "/products/reed-diffuser-1.webp",
+   "alt": "디퓨저 상품 이미지"
+  }
+ ],
+ "프라이팬": [
+  {
+   "src": "/products/frying-pan-1.webp",
+   "alt": "프라이팬 상품 이미지"
+  }
+ ],
+ "냄비 세트": [
+  {
+   "src": "/products/cooking-pot-1.webp",
+   "alt": "냄비 세트 상품 이미지"
+  }
+ ],
+ "밀폐용기": [
+  {
+   "src": "/products/food-storage-containers-1.webp",
+   "alt": "밀폐용기 상품 이미지"
+  }
+ ],
+ "텀블러": [
+  {
+   "src": "/products/tumbler-cup-1.webp",
+   "alt": "텀블러 상품 이미지"
+  }
+ ],
+ "도마": [
+  {
+   "src": "/products/wooden-cutting-board-1.webp",
+   "alt": "도마 상품 이미지"
+  }
+ ],
+ "전기 담요": [
+  {
+   "src": "/products/electric-blanket-1.webp",
+   "alt": "전기 담요 상품 이미지"
+  }
+ ],
+ "미니 히터": [
+  {
+   "src": "/products/space-heater-1.webp",
+   "alt": "미니 히터 상품 이미지"
+  }
+ ],
+ "가습기": [
+  {
+   "src": "/products/humidifier-1.webp",
+   "alt": "가습기 상품 이미지"
+  }
+ ],
+ "무선 청소기": [
+  {
+   "src": "/products/cordless-vacuum-cleaner-1.webp",
+   "alt": "무선 청소기 상품 이미지"
+  }
+ ],
+ "에어프라이어": [
+  {
+   "src": "/products/air-fryer-1.webp",
+   "alt": "에어프라이어 상품 이미지"
+  }
+ ],
+ "무선 이어폰": [
+  {
+   "src": "/products/wireless-earbuds-1.webp",
+   "alt": "무선 이어폰 상품 이미지"
+  }
+ ],
+ "블루투스 스피커": [
+  {
+   "src": "/products/bluetooth-speaker-1.webp",
+   "alt": "블루투스 스피커 상품 이미지"
+  }
+ ],
+ "보조배터리": [
+  {
+   "src": "/products/power-bank-1.webp",
+   "alt": "보조배터리 상품 이미지"
+  }
+ ],
+ "무선 마우스": [
+  {
+   "src": "/products/computer-mouse-1.webp",
+   "alt": "무선 마우스 상품 이미지"
+  }
+ ],
+ "키보드": [
+  {
+   "src": "/products/mechanical-keyboard-1.webp",
+   "alt": "키보드 상품 이미지"
+  }
+ ],
+ "캠핑 의자": [
+  {
+   "src": "/products/camping-chair-1.webp",
+   "alt": "캠핑 의자 상품 이미지"
+  }
+ ],
+ "캠핑 랜턴": [
+  {
+   "src": "/products/camping-lantern-1.webp",
+   "alt": "캠핑 랜턴 상품 이미지"
+  }
+ ],
+ "캠핑 테이블": [
+  {
+   "src": "/products/camping-table-1.webp",
+   "alt": "캠핑 테이블 상품 이미지"
+  }
+ ],
+ "코펠": [
+  {
+   "src": "/products/camping-cookware-1.webp",
+   "alt": "코펠 상품 이미지"
+  }
+ ],
+ "침낭": [
+  {
+   "src": "/products/sleeping-bag-1.webp",
+   "alt": "침낭 상품 이미지"
+  }
+ ],
+ "캣타워": [
+  {
+   "src": "/products/cat-tree-1.webp",
+   "alt": "캣타워 상품 이미지"
+  }
+ ],
+ "고양이 스크래쳐": [
+  {
+   "src": "/products/cat-scratcher-1.webp",
+   "alt": "고양이 스크래쳐 상품 이미지"
+  }
+ ],
+ "강아지 간식": [
+  {
+   "src": "/products/dog-treats-1.webp",
+   "alt": "강아지 간식 상품 이미지"
+  }
+ ],
+ "배변패드": [
+  {
+   "src": "/products/dog-lying-on-pad-1.webp",
+   "alt": "배변패드 상품 이미지"
+  }
+ ],
+ "고양이 모래": [
+  {
+   "src": "/products/cat-litter-box-1.webp",
+   "alt": "고양이 모래 상품 이미지"
+  }
+ ],
+ "아기 물티슈": [
+  {
+   "src": "/products/baby-wipes-1.webp",
+   "alt": "아기 물티슈 상품 이미지"
+  }
+ ],
+ "유아 로션": [
+  {
+   "src": "/products/baby-lotion-1.webp",
+   "alt": "유아 로션 상품 이미지"
+  }
+ ],
+ "유아 식기": [
+  {
+   "src": "/products/baby-plate-spoon-1.webp",
+   "alt": "유아 식기 상품 이미지"
+  }
+ ],
+ "블록 장난감": [
+  {
+   "src": "/products/toy-blocks-1.webp",
+   "alt": "블록 장난감 상품 이미지"
+  }
+ ],
+ "유아 내복": [
+  {
+   "src": "/products/baby-clothes-1.webp",
+   "alt": "유아 내복 상품 이미지"
+  }
+ ],
+ "무드등": [
+  {
+   "src": "/products/table-lamp-1.webp",
+   "alt": "무드등 상품 이미지"
+  }
+ ],
+ "책상": [
+  {
+   "src": "/products/wooden-desk-1.webp",
+   "alt": "책상 상품 이미지"
+  }
+ ],
+ "수납장": [
+  {
+   "src": "/products/storage-cabinet-1.webp",
+   "alt": "수납장 상품 이미지"
+  }
+ ],
+ "쿠션": [
+  {
+   "src": "/products/sofa-cushion-1.webp",
+   "alt": "쿠션 상품 이미지"
+  }
+ ],
+ "원목 선반": [
+  {
+   "src": "/products/wooden-shelf-1.webp",
+   "alt": "원목 선반 상품 이미지"
+  }
+ ]
+}

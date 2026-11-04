@@ -4,7 +4,8 @@
     uv run python scripts/prepare_images.py build     scripts/images_in/ 의 이미지를 줄여
                                                       frontend/public/products/ 에 넣고 data/images.json 을 쓴다
 
-이미지는 구글 플로우 · 피그마 AI 등 어디서 만들어도 된다. 파일 이름만 규칙대로:
+지금 이미지는 피그마 AI(gpt-image-2.5-flare)로 만들었다(2026-11-04, 키워드당 1장).
+구글 플로우 등 어디서 만들어도 된다. 파일 이름만 규칙대로:
     scripts/images_in/{슬러그}-1.png, {슬러그}-2.jpg …   (슬러그 예: camping-chair, table-lamp)
 키워드마다 1장 이상. 같은 키워드 상품 20개가 그 사진들을 돌려 쓴다(목 데이터도 사진을 나눠 쓴다).
 """
@@ -15,6 +16,7 @@ from pathlib import Path
 
 from PIL import Image, ImageOps
 
+from image_subjects import SUBJECTS
 from seeds import SEEDS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -53,7 +55,7 @@ def write_prompts() -> None:
             lines.append(f"### {keyword} → `{slug(query)}-1.png`")
             lines.append("")
             lines.append("```")
-            lines.append(STYLE.format(subject=f"{query} ({keyword})"))
+            lines.append(STYLE.format(subject=SUBJECTS.get(slug(query), f"{query} ({keyword})")))
             lines.append("```")
             lines.append("")
     PROMPTS.parent.mkdir(parents=True, exist_ok=True)
