@@ -77,7 +77,7 @@ function SearchForm({ variant }: { variant: 'pc' | 'mo' }) {
     <form
       role="search"
       onSubmit={onSubmit}
-      className="flex h-12 min-w-0 max-w-[440px] flex-1 items-center gap-3 rounded-full border-[1.5px] border-black bg-white pr-4 pl-6 focus-within:border-accio focus-within:shadow-accio-3"
+      className="flex h-12 w-full min-w-0 items-center gap-3 rounded-full border-[1.5px] border-black bg-white pr-4 pl-6 focus-within:border-accio focus-within:shadow-accio-3"
     >
       <input
         value={query}
@@ -217,11 +217,11 @@ export default function SiteHeader({ active, showBanner = false, mobileTitle }: 
           ))}
         </Container>
 
-        <Container className="flex items-center gap-10 pt-3.5 pb-[18px]">
-          <Logo height={46.44} />
-          {/* 검색창은 로고 옆에 최대 440px, 내 메뉴는 오른쪽 끝 */}
+        {/* 3칸 격자 — 로고 왼쪽 · 검색창 가운데(최대 440px) · 내 메뉴 오른쪽. 양옆 칸이 같은 너비라 검색창이 화면 가운데에 온다 */}
+        <Container className="grid grid-cols-[1fr_minmax(0,440px)_1fr] items-center gap-10 pt-3.5 pb-[18px]">
+          <Logo height={46.44} className="justify-self-start" />
           <SearchForm variant="pc" />
-          <nav aria-label="내 메뉴" className="ml-auto flex items-end gap-5">
+          <nav aria-label="내 메뉴" className="flex items-end gap-5 justify-self-end">
             <a href={accioHref('/mypage/wishlist')} className="flex min-w-11 flex-col items-center gap-1 text-12 text-sub">
               <img src={heartIcon} alt="" className="size-6" />찜
             </a>
