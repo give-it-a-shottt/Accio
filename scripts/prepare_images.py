@@ -16,7 +16,7 @@ from pathlib import Path
 
 from PIL import Image, ImageOps
 
-from image_subjects import SUBJECTS
+from image_subjects import SUBJECTS, VARIANTS
 from seeds import SEEDS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -42,25 +42,30 @@ def slug(query: str) -> str:
 
 def write_prompts() -> None:
     lines = [
-        "# 상품 이미지 프롬프트 (키워드 55개)",
+        "# 상품 이미지 프롬프트 (키워드 55개 × 3장)",
         "",
-        "구글 플로우 등에 그대로 붙여 넣고, 마음에 드는 1~2장을 `scripts/images_in/{파일 이름}` 으로 저장한다.",
-        "2장이면 `-1`, `-2` 로. 다 넣은 뒤 `uv run python scripts/prepare_images.py build`.",
+        "구글 플로우 · 피그마 AI 등에 그대로 붙여 넣고 `scripts/images_in/{파일 이름}` 으로 저장한다.",
+        "다 넣은 뒤 `uv run python scripts/prepare_images.py build`.",
+        "실제 생성 때는 전자 · 가구에 'Generic original design.', 반려동물에 'no animals' 를 덧붙였다.",
         "",
     ]
+    count = 0
     for category, keywords in SEEDS.items():
         lines.append(f"## {category}")
         lines.append("")
         for keyword, query in keywords:
-            lines.append(f"### {keyword} → `{slug(query)}-1.png`")
-            lines.append("")
-            lines.append("```")
-            lines.append(STYLE.format(subject=SUBJECTS.get(slug(query), f"{query} ({keyword})")))
-            lines.append("```")
-            lines.append("")
+            subjects = [SUBJECTS.get(slug(query), f"{query} ({keyword})"), *VARIANTS.get(slug(query), [])]
+            for index, subject in enumerate(subjects, 1):
+                lines.append(f"### {keyword} → `{slug(query)}-{index}.png`")
+                lines.append("")
+                lines.append("```")
+                lines.append(STYLE.format(subject=subject))
+                lines.append("```")
+                lines.append("")
+                count += 1
     PROMPTS.parent.mkdir(parents=True, exist_ok=True)
     PROMPTS.write_text("\n".join(lines), encoding="utf-8")
-    print(f"{PROMPTS.relative_to(ROOT)} — 프롬프트 {sum(len(v) for v in SEEDS.values())}개")
+    print(f"{PROMPTS.relative_to(ROOT)} — 프롬프트 {count}개")
 
 
 def build() -> None:
