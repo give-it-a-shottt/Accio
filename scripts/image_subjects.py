@@ -6,6 +6,10 @@ prepare_images.py 의 STYLE 앞부분에 들어간다. 없는 슬러그는 seeds
 """
 
 SUBJECTS: dict[str, str] = {
+    # 처음 테스트로 만든 3장 — 프롬프트는 영어 이름 그대로였고, 아래는 실제로 나온 생김새
+    "camping-chair": "a khaki green folding camping armchair with armrests and a cup holder (캠핑 의자)",
+    "table-lamp": "a mushroom-shaped table lamp with a frosted white glass dome shade on a light wood base (무드등)",
+    "face-cream-jar": "a light blue frosted glass jar of moisturizing cream with a white lid (수분크림)",
     "puffer-jacket": "a lightweight quilted puffer jacket (경량 패딩)",
     "wool-coat": "a wool coat on a wooden hanger (울 코트)",
     "knit-sweater": "a neatly folded knit sweater (니트)",

@@ -25,7 +25,7 @@ CHUNK = 200
 
 
 def to_rows(products: dict[str, list[dict]], images: dict[str, list[dict]]) -> list[dict]:
-    """seeds 순서대로 id 를 매긴다(g-0001 …). 같은 키워드 상품끼리 그 키워드 사진을 돌려 쓴다."""
+    """seeds 순서대로 id 를 매긴다(g-0001 …). 사진은 상품이 고른 번호(image)를, 없으면 차례로 돌려 쓴다."""
     rows = []
     for keywords in SEEDS.values():
         for keyword, _ in keywords:
@@ -33,7 +33,8 @@ def to_rows(products: dict[str, list[dict]], images: dict[str, list[dict]]) -> l
             if not photos:
                 sys.exit(f"'{keyword}' 사진이 없어요 — scripts/prepare_images.py build 를 먼저 실행해 주세요")
             for index, product in enumerate(products.get(keyword, [])):
-                photo = photos[index % len(photos)]
+                chosen = product.get("image")
+                photo = photos[chosen - 1] if chosen and chosen <= len(photos) else photos[index % len(photos)]
                 rows.append(
                     {
                         "id": f"g-{len(rows) + 1:04d}",
