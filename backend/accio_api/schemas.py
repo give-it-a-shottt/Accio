@@ -60,6 +60,7 @@ class ProductDetail(ProductSummary):
 class Interpreted(CamelModel):
     """Gemini 가 이해한 검색 조건 — 화면의 '이렇게 이해했어요' 칩"""
 
+    product_types: list[str]
     terms: list[str]
     category: str | None
     price_min: int | None

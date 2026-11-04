@@ -43,11 +43,18 @@ class Database:
         price_min: int | None = None,
         price_max: int | None = None,
         exclude: list[str] | None = None,
+        keyword_in: list[str] | None = None,
+        terms: list[str] | None = None,
     ) -> list[dict]:
         payload = {
             "q": q, "category_in": category, "price_min": price_min, "price_max": price_max,
             "exclude": exclude or [], "match_limit": limit,
         }
+        # 004_search_v2.sql 인자 — Gemini 해석이 있을 때만 보낸다(S0 는 003 과 같은 호출)
+        if keyword_in:
+            payload["keyword_in"] = keyword_in
+        if terms:
+            payload["terms"] = terms
         try:
             response = await self.client.post("/rpc/search_products", json=payload)
         except httpx.HTTPError as error:

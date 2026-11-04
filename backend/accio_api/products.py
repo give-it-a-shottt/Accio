@@ -36,13 +36,16 @@ async def search(
             except Exception:  # noqa: BLE001 — 해석이 어떤 이유로 실패해도 검색은 계속돼야 한다
                 fallback_reason = "error"
             else:
+                # 종류는 필터로(다른 종류가 섞이지 않게), 종류 이름 + 특징은 구절 그대로 점수로
                 rows = await db.search(
-                    " ".join(parsed.terms) or query,
+                    query,
                     limit=limit,
                     category=category or parsed.category,
                     price_min=parsed.price_min,
                     price_max=parsed.price_max,
                     exclude=parsed.exclude,
+                    keyword_in=list(parsed.product_types),
+                    terms=[*parsed.product_types, *parsed.terms],
                 )
                 products = [ProductSummary.from_row(row) for row in rows]
                 return SearchResponse(

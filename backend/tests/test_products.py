@@ -26,10 +26,12 @@ class FakeDb:
         self.fail = fail
         self.calls: list[tuple] = []
 
-    async def search(self, q, *, limit, category=None, price_min=None, price_max=None, exclude=None):
+    async def search(self, q, *, limit, category=None, price_min=None, price_max=None, exclude=None,
+                     keyword_in=None, terms=None):
         if self.fail:
             raise DatabaseError("down")
         self.calls.append(("search", q, limit, category, price_min, price_max, exclude))
+        self.filters = {"keyword_in": keyword_in, "terms": terms}
         return [ROW]
 
     async def product(self, product_id):
@@ -112,16 +114,19 @@ def test_database_failure_becomes_502():
     assert response.json()["detail"] == "상품 저장소에 연결하지 못했어요"
 
 
-PARSED = ParsedQuery(terms=["캠핑 테이블"], category="캠핑", price_min=None, price_max=50000, exclude=["접이식"])
+PARSED = ParsedQuery(product_types=["캠핑 테이블"], terms=["경량"], category="캠핑", price_min=None,
+                     price_max=50000, exclude=["접이식"])
 
 
 def test_parsed_search_passes_conditions_to_sql_filters(fake):
     app.dependency_overrides[get_parser] = lambda: FakeParser(PARSED)
     body = client.get("/api/search", params={"q": "접이식 말고 5만원 이하 캠핑 테이블"}).json()
     assert body["mode"] == "parsed"
-    assert body["interpreted"] == {"terms": ["캠핑 테이블"], "category": "캠핑", "priceMin": None,
-                                   "priceMax": 50000, "exclude": ["접이식"]}
-    assert fake.calls == [("search", "캠핑 테이블", 60, "캠핑", None, 50000, ["접이식"])]
+    assert body["interpreted"] == {"productTypes": ["캠핑 테이블"], "terms": ["경량"], "category": "캠핑",
+                                   "priceMin": None, "priceMax": 50000, "exclude": ["접이식"]}
+    assert fake.calls == [("search", "접이식 말고 5만원 이하 캠핑 테이블", 60, "캠핑", None, 50000, ["접이식"])]
+    # 종류는 필터로, 종류 이름 + 특징은 구절 그대로 점수로
+    assert fake.filters == {"keyword_in": ["캠핑 테이블"], "terms": ["캠핑 테이블", "경량"]}
 
 
 @pytest.mark.parametrize(("error", "reason"), [(TimeoutError(), "timeout"), (ValueError("bad"), "error")])
@@ -142,8 +147,10 @@ def test_keyword_mode_skips_gemini(fake):
 def test_tidy_fixes_swapped_and_invalid_prices():
     from accio_api.gemini import tidy
 
-    parsed = tidy(ParsedQuery(terms=[" 의자 ", "의자", ""], category=None, price_min=50000, price_max=30000,
-                              exclude=["", "접이식"]))
-    assert parsed.terms == ["의자"] and parsed.exclude == ["접이식"]
+    parsed = tidy(ParsedQuery(product_types=["캠핑 의자", "캠핑 의자"], terms=[" 경량 ", "경량", "", "캠핑 의자"],
+                              category=None, price_min=50000, price_max=30000, exclude=["", "접이식"]))
+    assert parsed.product_types == ["캠핑 의자"]
+    assert parsed.terms == ["경량"] and parsed.exclude == ["접이식"]
     assert (parsed.price_min, parsed.price_max) == (30000, 50000)
-    assert tidy(ParsedQuery(terms=["a"], category=None, price_min=0, price_max=-1, exclude=[])).price_max is None
+    empty = ParsedQuery(product_types=[], terms=["a"], category=None, price_min=0, price_max=-1, exclude=[])
+    assert tidy(empty).price_max is None

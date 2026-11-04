@@ -31,15 +31,20 @@ CATALOG: dict[str, list[str]] = {
     "가구": ["무드등", "책상", "수납장", "쿠션", "원목 선반"],
 }
 
+# 상품 종류는 분류 목록 안에서만 고르게 한다(구조화 출력의 enum) — 엉뚱한 종류 이름이 나오지 않게
+ProductType = Literal[tuple(k for keywords in CATALOG.values() for k in keywords)]  # type: ignore[valid-type]
+
 PARSE_TIMEOUT = 6.0
 CACHE_SIZE = 500
 
 
 class ParsedQuery(BaseModel):
+    product_types: list[ProductType] = Field(
+        description="사용자가 사려는 상품 종류(분류 목록에서). 보통 1개, 여러 종류가 다 맞을 때만 여럿. 모르면 빈 목록"
+    )
     terms: list[str] = Field(
-        description="상품명 · 태그에 실제로 쓰일 법한 찾을 낱말 2~6개. 상품 종류(분류 목록의 이름) + 원하는 특징. "
-        "사람 말은 상품 글의 말로 바꾼다(예: '클릭 소리 안 나는' → '무소음', '가벼운' → '경량'). "
-        "조사 · 요청어 · 가격 · 제외어는 넣지 않는다"
+        description="원하는 특징 낱말 0~4개(상품 종류 이름은 빼고). 사람 말을 상품 글의 말로 바꾼다"
+        "(예: '클릭 소리 안 나는' → '무소음', '가벼운' → '경량'). 조사 · 요청어 · 가격 · 제외어는 넣지 않는다"
     )
     category: Category | None = Field(description="분명할 때만 카테고리 하나. 여러 분류에 걸치거나 애매하면 null")
     price_min: int | None = Field(description="최저 가격(원). 말하지 않았으면 null")
@@ -55,8 +60,9 @@ PROMPT = """한국 쇼핑몰 검색창에 들어온 말을 검색 조건으로 �
 {catalog}
 
 규칙
-- terms 에는 분류 목록에 있는 상품 종류 이름을 그대로 하나 이상 넣는다(가장 가까운 것). 여러 종류가 맞으면 여럿
-- 원하는 특징은 상품 글에 쓰일 말로 바꿔 넣는다. 동의어가 있으면 1~2개 더(예: 무소음, 저소음)
+- product_types 는 사용자가 사려는 것만. 함께 쓰는 다른 물건은 넣지 않는다(마우스를 찾으면 키보드 ✕)
+  '선물' · '단백질 간식'처럼 여러 종류가 다 답이 되면 맞는 종류를 모두
+- terms 는 원하는 특징만, 상품 글에 쓰일 말로. 동의어가 있으면 1~2개 더(예: 무소음, 저소음)
 - '저렴한' · '싼' 처럼 숫자 없는 가격 표현은 price 를 정하지 않고 terms 에 '가성비' 를 넣는다
 - 'N만원대' 는 N만원 이상 (N+1)만원 미만. '이하' · '안쪽' 은 price_max, '이상' 은 price_min
 - 상품 종류가 분명하면 category 를 정하고, '선물'처럼 여러 분류에 걸치면 null
@@ -107,7 +113,8 @@ class QueryParser:
 
 def tidy(parsed: ParsedQuery) -> ParsedQuery:
     """모델이 이상한 값을 줘도 검색이 깨지지 않게 다듬는다."""
-    terms = list(dict.fromkeys(t.strip() for t in parsed.terms if t.strip()))[:8]
+    types = list(dict.fromkeys(parsed.product_types))[:6]
+    terms = [t for t in dict.fromkeys(t.strip() for t in parsed.terms if t.strip()) if t not in types][:6]
     exclude = list(dict.fromkeys(e.strip() for e in parsed.exclude if e.strip()))[:5]
     low, high = parsed.price_min, parsed.price_max
     if low is not None and low <= 0:
@@ -116,7 +123,9 @@ def tidy(parsed: ParsedQuery) -> ParsedQuery:
         high = None
     if low is not None and high is not None and low > high:
         low, high = high, low
-    return ParsedQuery(terms=terms, category=parsed.category, price_min=low, price_max=high, exclude=exclude)
+    return ParsedQuery(
+        product_types=types, terms=terms, category=parsed.category, price_min=low, price_max=high, exclude=exclude
+    )
 
 
 _parser: QueryParser | None = None
