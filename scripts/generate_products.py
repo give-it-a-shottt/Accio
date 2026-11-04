@@ -26,7 +26,8 @@ from seeds import PER_KEYWORD, SEEDS
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "products.json"
-DEFAULT_MODEL = "gemini-3.6-flash"
+# 무료 하루 한도가 넉넉한 Lite 를 기본으로 쓴다(.env GEMINI_MODEL 로 바꿀 수 있다)
+DEFAULT_MODEL = "gemini-3.5-flash-lite"
 # 무료 한도(분당 요청 수)에 걸리지 않게 호출 사이를 띄운다
 GAP_SECONDS = 7
 RETRIES = 3

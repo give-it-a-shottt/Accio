@@ -3,7 +3,8 @@
     uv run python scripts/load_products.py            적재
     uv run python scripts/load_products.py --dry-run  합친 결과만 보기
 
-필요한 값(.env): SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (쓰기 권한 — 이 스크립트에서만 쓴다)
+필요한 값(.env): SUPABASE_URL, SUPABASE_SECRET_KEY (쓰기 권한 — 이 스크립트에서만 쓴다)
+예전 이름 SUPABASE_SERVICE_ROLE_KEY 도 읽는다.
 """
 
 import json
@@ -60,7 +61,7 @@ def to_rows(products: dict[str, list[dict]], images: dict[str, list[dict]]) -> l
 
 
 def auth_headers(key: str) -> dict[str, str]:
-    """예전 키(JWT, eyJ…)는 Authorization 에도 넣고, 새 키(sb_secret_…)는 apikey 만 쓴다."""
+    """새 키(sb_secret_…)는 apikey 헤더만 쓴다. 예전 키(JWT, eyJ…)는 Authorization 에도 넣는다."""
     headers = {"apikey": key}
     if key.startswith("eyJ"):
         headers["Authorization"] = f"Bearer {key}"
@@ -83,9 +84,9 @@ def main() -> None:
 
     load_dotenv(ROOT / ".env")
     url = os.getenv("SUPABASE_URL")
-    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    key = os.getenv("SUPABASE_SECRET_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY")
     if not url or not key:
-        sys.exit(".env 에 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY 를 넣어 주세요")
+        sys.exit(".env 에 SUPABASE_URL, SUPABASE_SECRET_KEY 를 넣어 주세요")
 
     headers = {**auth_headers(key), "Prefer": "resolution=merge-duplicates,return=minimal"}
     with httpx.Client(base_url=f"{url.rstrip('/')}/rest/v1", headers=headers, timeout=30) as client:
