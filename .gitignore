@@ -1,0 +1,27 @@
+# 팀 프로젝트 원본 — 참고용. 안에 .env(비밀값)가 있어 레포에 넣지 않는다
+add_/
+
+# 비밀값
+.env
+.env.*
+!.env.example
+
+# 프론트
+node_modules/
+dist/
+*.tsbuildinfo
+
+# 파이썬
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# 네이버에서 받은 원본 수집 결과 — 약관 확인 전까지 레포에 넣지 않는다
+scripts/data/
+
+# 배포 · 에디터
+.vercel/
+.DS_Store
+Thumbs.db
