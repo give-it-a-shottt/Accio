@@ -3,5 +3,12 @@
   "installCommand": "cd frontend && npm ci",
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
-  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }]
+  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }],
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 15,
+      "excludeFiles": "{frontend/**,data/**,eval/**,docs/**,scripts/**,notes/**,supabase/**,add_/**}"
+    }
+  },
+  "crons": [{ "path": "/api/health/db", "schedule": "0 18 * * *" }]
 }
