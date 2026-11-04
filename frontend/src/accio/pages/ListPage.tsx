@@ -6,7 +6,7 @@ import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
 import close14Weak from '../assets/v4/icons/close-14-weak.svg'
 import close14 from '../assets/v4/icons/close-14.svg'
 import filterIcon from '../assets/v4/icons/filter.svg'
-import { ApiError, searchProducts } from '../api'
+import { ApiError, searchProducts, type Interpreted } from '../api'
 import { ALL_PRODUCTS, DELIVERY_OPTIONS, POPULAR_KEYWORDS, type Delivery, type Product } from '../data/catalog'
 import { accioHref } from '../routes'
 import FloatingStack from '../ui/FloatingStack'
@@ -38,7 +38,31 @@ interface Filters {
 const EMPTY_FILTERS: Filters = { categories: [], brands: [], delivery: [], price: [PRICE_MIN, PRICE_MAX] }
 
 /** 검색 결과 출처 — 검색 API(생성 상품) / API 가 안 될 때 목 데이터에서 찾기 */
-type Remote = { status: 'loading' } | { status: 'done'; products: Product[] } | { status: 'fallback' }
+type Remote =
+  | { status: 'loading' }
+  | { status: 'done'; products: Product[]; interpreted: Interpreted | null; aiSkipped: boolean }
+  | { status: 'fallback' }
+
+const won = (n: number) => (n % 10000 === 0 ? `${n / 10000}만원` : `${n.toLocaleString()}원`)
+
+/** AI 가 이해한 조건을 칩 글자로 — 종류 · 특징 · 가격 · 제외 */
+function interpretedChips(i: Interpreted) {
+  const price =
+    i.priceMin != null && i.priceMax != null
+      ? `${won(i.priceMin)}~${won(i.priceMax)}`
+      : i.priceMax != null
+        ? `${won(i.priceMax)} 이하`
+        : i.priceMin != null
+          ? `${won(i.priceMin)} 이상`
+          : null
+  return [
+    ...i.productTypes.map((label) => ({ label, tone: 'type' as const })),
+    ...(i.productTypes.length === 0 && i.category ? [{ label: i.category, tone: 'type' as const }] : []),
+    ...i.terms.map((label) => ({ label, tone: 'term' as const })),
+    ...(price ? [{ label: price, tone: 'term' as const }] : []),
+    ...i.exclude.map((label) => ({ label: `${label} 제외`, tone: 'exclude' as const })),
+  ]
+}
 
 /** 목 데이터 검색(API 가 안 될 때) — 상품명·브랜드·분야에 띄어쓰기로 나눈 말이 모두 들어가야 한다 */
 function matches(product: Product, query: string) {
@@ -200,7 +224,7 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
  * 검색어(#/accio/list?q=…)로 거른 뒤 왼쪽 필터(카테고리·브랜드·배송·가격)와 정렬, 9개씩 페이지를 나눈다.
  * 모바일은 필터를 아래에서 올라오는 시트로 연다.
  */
-export default function ListPage({ query = '' }: { query?: string }) {
+export default function ListPage({ query = '', exact = false }: { query?: string; exact?: boolean }) {
   const [draft, setDraft] = useState(query)
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
   const [sort, setSort] = useState<Sort>('관련도순')
@@ -213,17 +237,29 @@ export default function ListPage({ query = '' }: { query?: string }) {
   useEffect(() => {
     if (!query) return
     const controller = new AbortController()
-    searchProducts(query, controller.signal)
-      .then((result) => setRemote({ status: 'done', products: result.products }))
+    searchProducts(query, controller.signal, exact)
+      .then((result) =>
+        setRemote({
+          status: 'done',
+          products: result.products,
+          interpreted: result.interpreted,
+          // AI 해석이 늦거나 실패해 검색어 그대로 찾았을 때(사용자가 고른 게 아니면) 알린다
+          aiSkipped: !exact && result.mode === 'keyword' && result.fallbackReason !== null,
+        }),
+      )
       .catch((error: unknown) => {
         if (!(error instanceof ApiError)) return // 화면을 떠나며 취소한 요청
         setRemote({ status: 'fallback' })
         showToast({ message: '검색 서버에 연결하지 못해 예시 상품에서 찾았어요', error: true })
       })
     return () => controller.abort()
-  }, [query])
+  }, [query, exact])
 
   const loading = remote.status === 'loading'
+  const interpreted = remote.status === 'done' ? remote.interpreted : null
+  const aiSkipped = remote.status === 'done' && remote.aiSkipped
+  const listHref = (q: string, keywordOnly = false) =>
+    `${accioHref('/list')}?q=${encodeURIComponent(q)}${keywordOnly ? '&mode=keyword' : ''}`
   const fromApi = remote.status === 'done'
   const base = useMemo(() => {
     if (remote.status === 'done') return remote.products
@@ -311,13 +347,58 @@ export default function ListPage({ query = '' }: { query?: string }) {
               </span>
             </h1>
           </div>
-          {fromApi && (
-            <p className="text-12 text-sub-weak lg:text-13">
-              <span className="hidden lg:inline">검색 상품은 Gemini로 만든 </span>
-              <strong className="font-medium text-sub">데모용 가상 상품</strong>이에요
-              <span className="hidden lg:inline">. 실제로 판매하지 않아요</span>
-            </p>
-          )}
+          {/* 검색 안내 묶음 — AI 해석 칩 · 검색 방식 · 데모 안내 */}
+          <div className="flex flex-col gap-2 empty:hidden">
+            {/* AI 가 이해한 조건 — 틀렸으면 검색어 그대로 다시 찾는다 */}
+            {loading && !exact && (
+              <p className="flex items-center gap-2 text-13 text-sub">
+                <AiDot size={10} />
+                AI가 검색어를 이해하는 중…
+              </p>
+            )}
+            {interpreted && (
+              <div className="flex flex-wrap items-center gap-1.5 lg:gap-2">
+                <span className="flex items-center gap-1.5 pr-1 text-13 font-medium text-main">
+                  <AiDot size={10} />
+                  이렇게 이해했어요
+                </span>
+                {interpretedChips(interpreted).map((chip) => (
+                  <span
+                    key={chip.label}
+                    className={`rounded-full px-2.5 py-1 text-12 font-medium lg:text-13 ${
+                      chip.tone === 'type'
+                        ? 'bg-accio-soft text-accio-strong'
+                        : chip.tone === 'exclude'
+                          ? 'border border-regular text-sub line-through decoration-1'
+                          : 'bg-light text-main'
+                    }`}
+                  >
+                    {chip.label}
+                  </span>
+                ))}
+                <a href={listHref(query, true)} className="pl-1 text-12 text-sub-weak underline underline-offset-2 lg:text-13">
+                  검색어 그대로 찾기
+                </a>
+              </div>
+            )}
+            {(exact || aiSkipped) && fromApi && (
+              <p className="text-12 text-sub-weak lg:text-13">
+                {exact ? '검색어 그대로 찾은 결과예요.' : 'AI 해석이 늦어 검색어 그대로 찾았어요.'}{' '}
+                {exact && (
+                  <a href={listHref(query)} className="underline underline-offset-2">
+                    AI로 이해해서 찾기
+                  </a>
+                )}
+              </p>
+            )}
+            {fromApi && (
+              <p className="text-12 text-sub-weak lg:text-13">
+                <span className="hidden lg:inline">검색 상품은 Gemini로 만든 </span>
+                <strong className="font-medium text-sub">데모용 가상 상품</strong>이에요
+                <span className="hidden lg:inline">. 실제로 판매하지 않아요</span>
+              </p>
+            )}
+          </div>
 
           {/* ── 검색창 (모바일) ── */}
           <form role="search" onSubmit={search} className="flex h-11 items-center gap-2 rounded-full bg-light pr-3.5 pl-4 lg:hidden">

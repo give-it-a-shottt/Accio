@@ -2,10 +2,23 @@
 import type { Product, ProductDetail } from './data/catalog'
 import { rememberProducts } from './ui/productCache'
 
+/** Gemini 가 이해한 검색 조건 — '이렇게 이해했어요' 칩 */
+export interface Interpreted {
+  productTypes: string[]
+  terms: string[]
+  category: string | null
+  priceMin: number | null
+  priceMax: number | null
+  exclude: string[]
+}
+
 export interface SearchResult {
   query: string
   /** keyword = 검색어 그대로(S0), parsed = Gemini 해석(P3), hybrid = 임베딩 혼합(P4) */
   mode: 'keyword' | 'parsed' | 'hybrid'
+  interpreted: Interpreted | null
+  /** AI 해석을 시도했다가 검색어 그대로 찾았을 때 이유 */
+  fallbackReason: 'timeout' | 'error' | 'no_key' | null
   total: number
   products: Product[]
 }
@@ -32,8 +45,10 @@ async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   return response.json() as Promise<T>
 }
 
-export async function searchProducts(query: string, signal?: AbortSignal) {
-  const result = await getJson<SearchResult>(`/search?q=${encodeURIComponent(query)}&limit=60`, signal)
+/** exact = 검색어 그대로(AI 해석 없이) — '이렇게 이해했어요'가 틀렸을 때 사용자가 고른다 */
+export async function searchProducts(query: string, signal?: AbortSignal, exact = false) {
+  const mode = exact ? '&mode=keyword' : ''
+  const result = await getJson<SearchResult>(`/search?q=${encodeURIComponent(query)}&limit=60${mode}`, signal)
   // 장바구니 · 찜 · 최근 본 상품이 나중에 id 로 찾을 수 있게 기억해 둔다
   rememberProducts(result.products)
   return result

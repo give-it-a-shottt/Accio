@@ -48,7 +48,8 @@ function AccioRoute({ path, params }: AccioAppProps) {
   if (path === "/list") {
     const query = params.get("q") ?? "";
     // 검색어가 바뀌면 필터·페이지를 새로 시작하도록 key 로 다시 만든다
-    return <ListPage key={query} query={query} />;
+    const exact = params.get("mode") === "keyword";
+    return <ListPage key={`${query}|${exact}`} query={query} exact={exact} />;
   }
   if (path === "/detail") {
     const id = params.get("id") ?? undefined;
