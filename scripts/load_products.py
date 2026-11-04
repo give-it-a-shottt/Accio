@@ -125,6 +125,10 @@ def main() -> None:
     with httpx.Client(base_url=f"{url.rstrip('/')}/rest/v1", headers=headers, timeout=30) as client:
         upsert(client, "products", rows)
         if review_rows:
+            # 상품을 다시 만들면 리뷰 수가 바뀔 수 있다 — 예전 리뷰가 남지 않게 비우고 새로 넣는다
+            response = client.delete("/reviews", params={"id": "not.is.null"})
+            if response.is_error:
+                sys.exit(f"reviews 비우기 실패 {response.status_code}: {response.text}")
             upsert(client, "reviews", review_rows)
     print("Supabase 적재 끝")
 

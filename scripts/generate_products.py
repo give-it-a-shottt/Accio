@@ -45,6 +45,12 @@ REAL_BRANDS = [
     "나이키", "아디다스", "유니클로", "자라", "뉴발란스", "하기스", "보솜이", "크리넥스", "깨끗한나라",
     "페디그리", "로얄캐닌", "레고", "피셔프라이스", "스탠리", "써모스", "조셉조셉", "자연주의",
 ]
+# 상품명 · 설명 · 스펙에 쓰면 안 되는 상표 · 기술명(소재 · 호환 표기 포함). 브랜드 칸뿐 아니라 글 전체를 검사한다
+TRADEMARKS = [
+    "고어텍스", "gore-tex", "비브람", "vibram", "코듀라", "cordura", "폴라텍", "polartec", "쿨맥스", "coolmax",
+    "프리마로프트", "primaloft", "써모라이트", "테프론", "teflon", "맥세이프", "magsafe", "아이폰", "iphone",
+    "갤럭시", "에어팟", "airpods", "돌비", "dolby", "고릴라글라스", "르크루제", "스타우브", "브리타", "타파웨어",
+]
 
 
 class Spec(BaseModel):
@@ -78,6 +84,8 @@ PROMPT = """한국 온라인 쇼핑몰의 데모용 상품 데이터를 만들�
 규칙
 - 실제로 팔 법한 상품처럼 구체적으로. 다만 브랜드는 반드시 지어낸 이름(실존 브랜드 · 상표 금지,
   실존 브랜드를 살짝 바꾼 이름도 금지 — 예: 바이오더마 → 바이오더마틱 ✕)
+- 상품명 · 설명 · 스펙에도 상표 · 기술명을 쓰지 않는다. 일반 표현으로 바꾼다
+  (고어텍스 → 방수 투습 멤브레인, 비브람 → 고무 아웃솔, 맥세이프 → 마그네틱 무선 충전, 아이폰 → 스마트폰)
 - 브랜드는 {count}개 상품에 10개 이상 서로 다르게. 한 브랜드는 최대 3~4개 상품까지
 - {count}개가 서로 겹치지 않게: 가격대(저가 · 중가 · 고가), 크기 · 용량, 대상(1인 · 가족 · 아이 · 반려동물), \
 계절, 소재, 형태(예: 접이식 / 고정식)를 골고루 섞는다
@@ -91,6 +99,13 @@ PROMPT = """한국 온라인 쇼핑몰의 데모용 상품 데이터를 만들�
 - 상품명 · 설명 · 스펙의 색 · 형태 · 소재가 고른 사진과 어긋나지 않게 한다
   (예: 2번 사진이 네이비 로우 체어면 그 사진을 고른 상품은 네이비 · 낮은 등받이)
 """
+
+
+def trademark_hits(product: dict) -> list[str]:
+    """브랜드 칸은 실존 브랜드를 닮았는지, 상품명 · 설명 · 스펙은 상표 · 기술명이 들어 있는지 본다."""
+    brand = product["brand"].lower().replace(" ", "")
+    text = " ".join([product["name"], product["description"], *(s["value"] for s in product["specs"])]).lower()
+    return [f"브랜드≈{b}" for b in REAL_BRANDS if b.lower() in brand] + [t for t in TRADEMARKS if t in text]
 
 
 def slug(query: str) -> str:
@@ -168,9 +183,8 @@ def main() -> None:
             OUT.write_text(json.dumps(saved, ensure_ascii=False, indent=1), encoding="utf-8")
             spread = [sum(p["image"] == i for p in products) for i in (1, 2, 3)]
             for product in products:
-                hits = [b for b in REAL_BRANDS if b.lower() in product["brand"].lower().replace(" ", "")]
-                if hits:
-                    print(f"  ⚠ 실존 브랜드와 비슷함: {product['brand']} ({', '.join(hits)})")
+                for hit in trademark_hits(product):
+                    print(f"  ⚠ 실존 브랜드 · 상표: {product['name']} ({hit})")
             top = max(Counter(p["brand"] for p in products).values(), default=0)
             if top > 4:
                 print(f"  ⚠ 한 브랜드가 {top}개 상품에 몰림")
