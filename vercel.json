@@ -15,5 +15,5 @@
     { "source": "/api/(.*)", "destination": { "service": "api" } },
     { "source": "/(.*)", "destination": { "service": "web" } }
   ],
-  "crons": [{ "path": "/api/health/db", "schedule": "0 18 * * *" }]
+  "crons": [{ "path": "/api/health/db", "schedule": "0 18 */3 * *" }]
 }
