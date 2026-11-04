@@ -1,10 +1,11 @@
-"""data/products.json + data/images.json 을 합쳐 Supabase products 테이블에 넣는다(있으면 덮어쓴다).
+"""data/products.json + images.json (+ reviews.json) 을 합쳐 Supabase 에 넣는다(있으면 덮어쓴다).
 
     uv run python scripts/load_products.py            적재
     uv run python scripts/load_products.py --dry-run  합친 결과만 보기
 
 필요한 값(.env): SUPABASE_URL, SUPABASE_SECRET_KEY (쓰기 권한 — 이 스크립트에서만 쓴다)
 예전 이름 SUPABASE_SERVICE_ROLE_KEY 도 읽는다.
+reviews.json 이 있으면 reviews 테이블(002_reviews.sql)에도 넣는다.
 """
 
 import json
@@ -21,23 +22,30 @@ from seeds import SEEDS
 ROOT = Path(__file__).resolve().parent.parent
 PRODUCTS = ROOT / "data" / "products.json"
 IMAGES = ROOT / "data" / "images.json"
+REVIEWS = ROOT / "data" / "reviews.json"
 CHUNK = 200
 
 
-def to_rows(products: dict[str, list[dict]], images: dict[str, list[dict]]) -> list[dict]:
-    """seeds 순서대로 id 를 매긴다(g-0001 …). 사진은 상품이 고른 번호(image)를, 없으면 차례로 돌려 쓴다."""
-    rows = []
+def to_rows(
+    products: dict[str, list[dict]], images: dict[str, list[dict]], reviews: dict[str, list[list[dict]]]
+) -> tuple[list[dict], list[dict]]:
+    """seeds 순서대로 id 를 매긴다(g-0001 …). 사진은 상품이 고른 번호(image)를, 없으면 차례로 돌려 쓴다.
+    리뷰 id 는 상품 id 뒤에 -r1, -r2 … 를 붙인다."""
+    rows: list[dict] = []
+    review_rows: list[dict] = []
     for keywords in SEEDS.values():
         for keyword, _ in keywords:
             photos = images.get(keyword) or []
             if not photos:
                 sys.exit(f"'{keyword}' 사진이 없어요 — scripts/prepare_images.py build 를 먼저 실행해 주세요")
+            keyword_reviews = reviews.get(keyword, [])
             for index, product in enumerate(products.get(keyword, [])):
                 chosen = product.get("image")
                 photo = photos[chosen - 1] if chosen and chosen <= len(photos) else photos[index % len(photos)]
+                product_id = f"g-{len(rows) + 1:04d}"
                 rows.append(
                     {
-                        "id": f"g-{len(rows) + 1:04d}",
+                        "id": product_id,
                         "name": product["name"],
                         "brand": product["brand"],
                         "category": product["category"],
@@ -59,7 +67,22 @@ def to_rows(products: dict[str, list[dict]], images: dict[str, list[dict]]) -> l
                         "photo_page_url": photo.get("page_url", ""),
                     }
                 )
-    return rows
+                product_reviews = keyword_reviews[index] if index < len(keyword_reviews) else []
+                for number, review in enumerate(product_reviews, 1):
+                    review_rows.append(
+                        {
+                            "id": f"{product_id}-r{number}",
+                            "product_id": product_id,
+                            "author": review["author"],
+                            "rating": review["rating"],
+                            "days_ago": review["days_ago"],
+                            "body": review["body"],
+                            "highlight": review.get("highlight"),
+                            "helpful": review["helpful"],
+                            "topics": review["topics"],
+                        }
+                    )
+    return rows, review_rows
 
 
 def auth_headers(key: str) -> dict[str, str]:
@@ -70,15 +93,23 @@ def auth_headers(key: str) -> dict[str, str]:
     return headers
 
 
+def upsert(client: httpx.Client, table: str, rows: list[dict]) -> None:
+    for start in range(0, len(rows), CHUNK):
+        response = client.post(f"/{table}", params={"on_conflict": "id"}, json=rows[start : start + CHUNK])
+        if response.is_error:
+            sys.exit(f"{table} 적재 실패 {response.status_code}: {response.text}")
+
+
 def main() -> None:
     for path, script in ((PRODUCTS, "generate_products.py"), (IMAGES, "prepare_images.py build")):
         if not path.exists():
             sys.exit(f"{path.relative_to(ROOT)} 이 없어요 — scripts/{script} 를 먼저 실행해 주세요")
     products = json.loads(PRODUCTS.read_text(encoding="utf-8"))
     images = json.loads(IMAGES.read_text(encoding="utf-8"))
-    rows = to_rows(products, images)
+    reviews = json.loads(REVIEWS.read_text(encoding="utf-8")) if REVIEWS.exists() else {}
+    rows, review_rows = to_rows(products, images, reviews)
 
-    print(f"상품 {len(rows)}개")
+    print(f"상품 {len(rows)}개 · 리뷰 {len(review_rows)}개")
     for category, count in Counter(r["category"] for r in rows).items():
         print(f"  {category:<5} {count}")
     if "--dry-run" in sys.argv:
@@ -92,10 +123,9 @@ def main() -> None:
 
     headers = {**auth_headers(key), "Prefer": "resolution=merge-duplicates,return=minimal"}
     with httpx.Client(base_url=f"{url.rstrip('/')}/rest/v1", headers=headers, timeout=30) as client:
-        for start in range(0, len(rows), CHUNK):
-            response = client.post("/products", params={"on_conflict": "id"}, json=rows[start : start + CHUNK])
-            if response.is_error:
-                sys.exit(f"적재 실패 {response.status_code}: {response.text}")
+        upsert(client, "products", rows)
+        if review_rows:
+            upsert(client, "reviews", review_rows)
     print("Supabase 적재 끝")
 
 
