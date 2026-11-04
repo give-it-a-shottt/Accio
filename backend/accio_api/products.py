@@ -1,26 +1,61 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from accio_api.db import Database, get_db
-from accio_api.schemas import ProductDetail, ProductSummary, SearchResponse
+from accio_api.gemini import QueryParser, get_parser
+from accio_api.schemas import Interpreted, ProductDetail, ProductSummary, SearchResponse
 
 router = APIRouter(prefix="/api")
 Db = Annotated[Database, Depends(get_db)]
+Parser = Annotated[QueryParser | None, Depends(get_parser)]
 
 
 @router.get("/search")
 async def search(
     db: Db,
+    parser: Parser,
     q: Annotated[str, Query(max_length=200)] = "",
     category: str | None = None,
     limit: Annotated[int, Query(ge=1, le=200)] = 60,
+    mode: Literal["auto", "keyword"] = "auto",
 ) -> SearchResponse:
-    """S0 — 검색어를 그대로 낱말로 나눠 키워드 점수로 찾는다(LLM 없음)."""
+    """auto: Gemini 가 검색어를 조건으로 해석해 SQL 필터로 넘긴다(P3). 실패하면 S0 키워드 검색.
+    keyword: 검색어 그대로(S0) — 시험지 비교용."""
     query = q.strip()
+    fallback_reason: str | None = None
+
+    if mode == "auto" and query:
+        if parser is None:
+            fallback_reason = "no_key"
+        else:
+            try:
+                parsed = await parser.parse(query)
+            except TimeoutError:
+                fallback_reason = "timeout"
+            except Exception:  # noqa: BLE001 — 해석이 어떤 이유로 실패해도 검색은 계속돼야 한다
+                fallback_reason = "error"
+            else:
+                rows = await db.search(
+                    " ".join(parsed.terms) or query,
+                    limit=limit,
+                    category=category or parsed.category,
+                    price_min=parsed.price_min,
+                    price_max=parsed.price_max,
+                    exclude=parsed.exclude,
+                )
+                products = [ProductSummary.from_row(row) for row in rows]
+                return SearchResponse(
+                    query=query,
+                    mode="parsed",
+                    interpreted=Interpreted(**parsed.model_dump()),
+                    total=len(products),
+                    products=products,
+                )
+
     rows = await db.search(query, limit=limit, category=category)
     products = [ProductSummary.from_row(row) for row in rows]
-    return SearchResponse(query=query, total=len(products), products=products)
+    return SearchResponse(query=query, fallback_reason=fallback_reason, total=len(products), products=products)
 
 
 @router.get("/products/{product_id}")
@@ -46,4 +81,3 @@ async def health_db(db: Db) -> dict[str, str]:
     """DB 까지 닿는지 — Vercel Cron 이 매일 불러 Supabase 무료 프로젝트가 잠들지 않게 한다."""
     await db.ping()
     return {"status": "ok"}
-

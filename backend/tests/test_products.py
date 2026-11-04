@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from accio_api.db import DatabaseError, get_db
+from accio_api.gemini import ParsedQuery, get_parser
 from accio_api.main import app
 
 ROW = {
@@ -25,10 +26,10 @@ class FakeDb:
         self.fail = fail
         self.calls: list[tuple] = []
 
-    async def search(self, q, *, limit, category=None):
+    async def search(self, q, *, limit, category=None, price_min=None, price_max=None, exclude=None):
         if self.fail:
             raise DatabaseError("down")
-        self.calls.append(("search", q, limit, category))
+        self.calls.append(("search", q, limit, category, price_min, price_max, exclude))
         return [ROW]
 
     async def product(self, product_id):
@@ -42,10 +43,21 @@ class FakeDb:
         return None
 
 
+class FakeParser:
+    def __init__(self, result: ParsedQuery | None = None, error: Exception | None = None) -> None:
+        self.result, self.error = result, error
+
+    async def parse(self, query):
+        if self.error:
+            raise self.error
+        return self.result
+
+
 @pytest.fixture
 def fake():
     db = FakeDb()
     app.dependency_overrides[get_db] = lambda: db
+    app.dependency_overrides[get_parser] = lambda: None  # 기본은 Gemini 키 없음 → S0
     yield db
     app.dependency_overrides.clear()
 
@@ -64,7 +76,8 @@ def test_search_returns_camel_case_products(fake):
     assert product["discountRate"] == 10 and product["reviewCount"] == 1240
     assert product["image"] == "/products/camping-chair-1.webp"
     assert product["source"] == "generated"
-    assert fake.calls == [("search", "캠핑 의자", 10, None)]
+    assert fake.calls == [("search", "캠핑 의자", 10, None, None, None, None)]
+    assert body["fallbackReason"] == "no_key"
 
 
 def test_search_limit_is_bounded(fake):
@@ -90,9 +103,47 @@ def test_related_uses_same_keyword_without_self(fake):
 
 def test_database_failure_becomes_502():
     app.dependency_overrides[get_db] = lambda: FakeDb(fail=True)
+    app.dependency_overrides[get_parser] = lambda: None
     try:
         response = client.get("/api/search", params={"q": "의자"})
     finally:
         app.dependency_overrides.clear()
     assert response.status_code == 502
     assert response.json()["detail"] == "상품 저장소에 연결하지 못했어요"
+
+
+PARSED = ParsedQuery(terms=["캠핑 테이블"], category="캠핑", price_min=None, price_max=50000, exclude=["접이식"])
+
+
+def test_parsed_search_passes_conditions_to_sql_filters(fake):
+    app.dependency_overrides[get_parser] = lambda: FakeParser(PARSED)
+    body = client.get("/api/search", params={"q": "접이식 말고 5만원 이하 캠핑 테이블"}).json()
+    assert body["mode"] == "parsed"
+    assert body["interpreted"] == {"terms": ["캠핑 테이블"], "category": "캠핑", "priceMin": None,
+                                   "priceMax": 50000, "exclude": ["접이식"]}
+    assert fake.calls == [("search", "캠핑 테이블", 60, "캠핑", None, 50000, ["접이식"])]
+
+
+@pytest.mark.parametrize(("error", "reason"), [(TimeoutError(), "timeout"), (ValueError("bad"), "error")])
+def test_parser_failure_falls_back_to_keyword_search(fake, error, reason):
+    app.dependency_overrides[get_parser] = lambda: FakeParser(error=error)
+    body = client.get("/api/search", params={"q": "캠핑 테이블"}).json()
+    assert body["mode"] == "keyword"
+    assert body["fallbackReason"] == reason
+    assert fake.calls == [("search", "캠핑 테이블", 60, None, None, None, None)]
+
+
+def test_keyword_mode_skips_gemini(fake):
+    app.dependency_overrides[get_parser] = lambda: FakeParser(error=AssertionError("부르면 안 됨"))
+    body = client.get("/api/search", params={"q": "캠핑 테이블", "mode": "keyword"}).json()
+    assert body["mode"] == "keyword" and body["fallbackReason"] is None
+
+
+def test_tidy_fixes_swapped_and_invalid_prices():
+    from accio_api.gemini import tidy
+
+    parsed = tidy(ParsedQuery(terms=[" 의자 ", "의자", ""], category=None, price_min=50000, price_max=30000,
+                              exclude=["", "접이식"]))
+    assert parsed.terms == ["의자"] and parsed.exclude == ["접이식"]
+    assert (parsed.price_min, parsed.price_max) == (30000, 50000)
+    assert tidy(ParsedQuery(terms=["a"], category=None, price_min=0, price_max=-1, exclude=[])).price_max is None

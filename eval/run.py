@@ -5,6 +5,8 @@
     uv run python eval/run.py --save S0          점수를 runs/S0.json 에 남기기
     uv run python eval/run.py --base S1          비교 기준 바꾸기
     uv run python eval/run.py --api http://…     다른 서버(배포 주소 등)로 재기
+    uv run python eval/run.py --mode keyword     Gemini 해석 없이(S0 과 같은 조건). 기본은 auto
+    uv run python eval/run.py --gap 4            검색어 사이를 4초 띄우기(Gemini 무료 분당 한도)
 
 점수: 검색어마다 precision@5 = 상위 5개 중 조건을 모두 지킨 개수 / 5 (결과가 5개보다 적으면 모자란 만큼 틀림).
 데이터에 정답이 5개보다 적은 검색어는 분모를 그 수로 줄인다(있는 정답을 다 찾으면 만점).
@@ -74,16 +76,17 @@ def achievable(queries: list[dict]) -> dict[str, int]:
     return {q["id"]: min(TOP_K, sum(1 for p in products if not failures(p, q))) for q in queries}
 
 
-def run(queries: list[dict], api: str) -> dict:
+def run(queries: list[dict], api: str, mode: str, gap: float) -> dict:
     ideal = achievable(queries)
     results = []
     with httpx.Client(base_url=api.rstrip("/"), timeout=30) as client:
         for q in queries:
             started = time.perf_counter()
-            response = client.get("/api/search", params={"q": q["query"], "limit": TOP_K})
+            response = client.get("/api/search", params={"q": q["query"], "limit": TOP_K, "mode": mode})
             response.raise_for_status()
             elapsed = round((time.perf_counter() - started) * 1000)
-            top = response.json()["products"][:TOP_K]
+            body = response.json()
+            top = body["products"][:TOP_K]
             judged = [{"id": p["id"], "name": p["name"], "keyword": p.get("keyword"), "price": p["price"],
                        "fail": failures(p, q)} for p in top]
             hits = sum(1 for j in judged if not j["fail"])
@@ -91,11 +94,16 @@ def run(queries: list[dict], api: str) -> dict:
                 "id": q["id"], "type": q["type"], "query": q["query"],
                 "precision": min(1.0, hits / max(1, ideal[q["id"]])),
                 "first_hit": bool(judged) and not judged[0]["fail"], "ms": elapsed, "top": judged,
+                "mode": body.get("mode"), "fallback": body.get("fallbackReason"),
+                "interpreted": body.get("interpreted"),
             })
+            if gap:
+                time.sleep(gap)
     by_type: dict[str, list[float]] = defaultdict(list)
     for r in results:
         by_type[r["type"]].append(r["precision"])
     return {
+        "fallbacks": sum(1 for r in results if r["fallback"]),
         "precision_at_5": round(sum(r["precision"] for r in results) / len(results), 3),
         "first_hit_rate": round(sum(r["first_hit"] for r in results) / len(results), 3),
         "median_ms": sorted(r["ms"] for r in results)[len(results) // 2],
@@ -124,6 +132,8 @@ def report(score: dict, base: dict | None, base_name: str) -> None:
         line += f"   ({base_name}: {base['precision_at_5']:.3f} → {change:+.3f})"
     print(line)
     print("유형별: " + " · ".join(f"{t} {v:.2f}" for t, v in score["by_type"].items()))
+    if score.get("fallbacks"):
+        print(f"⚠ Gemini 해석 실패로 키워드 검색으로 돌아간 문항 {score['fallbacks']}개")
 
 
 def main() -> None:
@@ -131,7 +141,7 @@ def main() -> None:
     if "--check" in sys.argv:
         check(queries)
         return
-    score = run(queries, option("api", "http://localhost:8000"))
+    score = run(queries, option("api", "http://localhost:8000"), option("mode", "auto"), float(option("gap", "0")))
     base_name = option("base", "S0")
     base_path = RUNS / f"{base_name}.json"
     save_as = option("save")

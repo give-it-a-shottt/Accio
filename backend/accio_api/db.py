@@ -34,12 +34,22 @@ class Database:
             raise DatabaseError(f"Supabase {response.status_code}: {response.text[:200]}")
         return response.json()
 
-    async def search(self, q: str, *, limit: int, category: str | None = None) -> list[dict]:
+    async def search(
+        self,
+        q: str,
+        *,
+        limit: int,
+        category: str | None = None,
+        price_min: int | None = None,
+        price_max: int | None = None,
+        exclude: list[str] | None = None,
+    ) -> list[dict]:
+        payload = {
+            "q": q, "category_in": category, "price_min": price_min, "price_max": price_max,
+            "exclude": exclude or [], "match_limit": limit,
+        }
         try:
-            response = await self.client.post(
-                "/rpc/search_products",
-                json={"q": q, "category_in": category, "match_limit": limit},
-            )
+            response = await self.client.post("/rpc/search_products", json=payload)
         except httpx.HTTPError as error:
             raise DatabaseError(f"Supabase 연결 실패: {error.__class__.__name__}") from error
         if response.is_error:

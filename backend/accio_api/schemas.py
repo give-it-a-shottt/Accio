@@ -57,9 +57,22 @@ class ProductDetail(ProductSummary):
         return cls(**{**row, "image": row["image_url"], "reviews": row.get("reviews") or []})
 
 
+class Interpreted(CamelModel):
+    """Gemini 가 이해한 검색 조건 — 화면의 '이렇게 이해했어요' 칩"""
+
+    terms: list[str]
+    category: str | None
+    price_min: int | None
+    price_max: int | None
+    exclude: list[str]
+
+
 class SearchResponse(CamelModel):
     query: str
-    # S0 은 검색어 그대로(keyword). P3 에서 Gemini 해석(parsed), P4 에서 임베딩 혼합(hybrid)
+    # keyword = 검색어 그대로(S0), parsed = Gemini 해석(P3), hybrid = 임베딩 혼합(P4)
     mode: Literal["keyword", "parsed", "hybrid"] = "keyword"
+    interpreted: Interpreted | None = None
+    # parsed 를 시도했다가 키워드로 돌아왔을 때 이유(시간 초과 · 오류 · 키 없음)
+    fallback_reason: str | None = None
     total: int
     products: list[ProductSummary]
