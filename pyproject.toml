@@ -5,6 +5,7 @@ description = "Accio 자연어 검색 쇼핑몰 백엔드 (FastAPI · Gemini · 
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",
+    "google-genai>=2.34.0",
     "httpx>=0.28.1",
     "pydantic-settings>=2.6",
 ]
