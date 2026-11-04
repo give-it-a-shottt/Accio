@@ -18,6 +18,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
+# 이미지 원본(플로우 · 피그마에서 받은 그대로) — 줄인 webp 만 frontend/public/products/ 에 올린다
+scripts/images_in/
+
 # 배포 · 에디터
 .vercel/
 .DS_Store

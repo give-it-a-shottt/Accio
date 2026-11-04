@@ -3,7 +3,7 @@
 카테고리는 프론트 `Category` 타입(frontend/src/accio/data/catalog.ts)과 같은 이름이어야 필터 UI 와 맞는다.
 키워드는 목 데이터 상품 · 홈 추천 질문(비 오는 날 운동화, 집들이 선물, 자취방 무드등, 휴지)에서 골랐다.
 한 키워드로 한 카테고리를 다 채우면 결과가 한쪽으로 쏠려서(예: '캠핑' → 텐트만) 세부 키워드로 나눈다.
-두 번째 값은 Unsplash 사진 검색어 — 영어 검색어가 훨씬 잘 맞는다.
+두 번째 값은 영어 이름 — 이미지 프롬프트와 파일 이름(camping chair → camping-chair-1.webp)에 쓴다.
 """
 
 SEEDS: dict[str, list[tuple[str, str]]] = {
@@ -88,5 +88,3 @@ SEEDS: dict[str, list[tuple[str, str]]] = {
 
 # 키워드마다 만들 상품 수 → 카테고리당 100개, 전체 1,100개
 PER_KEYWORD = 20
-# 키워드마다 받을 사진 수 — 같은 키워드 상품 20개가 사진 10장을 2번씩 나눠 쓴다
-PHOTOS_PER_KEYWORD = 10

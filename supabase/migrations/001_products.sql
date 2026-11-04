@@ -1,4 +1,4 @@
--- 001 상품 테이블 — Gemini 로 만든 데모용 가상 상품(data/products.json) + Unsplash 사진(data/images.json)
+-- 001 상품 테이블 — Gemini 로 만든 데모용 가상 상품(data/products.json) + 상품 이미지(data/images.json)
 -- Supabase 대시보드 > SQL Editor 에 붙여 넣어 실행한다.
 
 create extension if not exists pg_trgm with schema extensions;  -- 한국어 키워드 검색(글자 3개 묶음 유사도)
@@ -19,7 +19,7 @@ create table if not exists public.products (
   specs             jsonb not null default '[]',     -- [{label, value}]
   tags              text[] not null default '{}',    -- 용도 · 상황 · 대상 태그
   search_text       text not null,                   -- 상품명 · 브랜드 · 태그를 이은 키워드 검색용 글(적재 스크립트가 채움)
-  image_url         text not null,                   -- Unsplash 사진(images.unsplash.com 주소 그대로)
+  image_url         text not null,                   -- /products/{슬러그}-1.webp (frontend/public) 또는 외부 사진 주소
   image_alt         text not null default '',
   photographer      text not null default '',
   photographer_url  text not null default '',

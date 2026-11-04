@@ -31,7 +31,7 @@ def to_rows(products: dict[str, list[dict]], images: dict[str, list[dict]]) -> l
         for keyword, _ in keywords:
             photos = images.get(keyword) or []
             if not photos:
-                sys.exit(f"'{keyword}' 사진이 없어요 — scripts/fetch_images.py 를 먼저 실행해 주세요")
+                sys.exit(f"'{keyword}' 사진이 없어요 — scripts/prepare_images.py build 를 먼저 실행해 주세요")
             for index, product in enumerate(products.get(keyword, [])):
                 photo = photos[index % len(photos)]
                 rows.append(
@@ -52,9 +52,10 @@ def to_rows(products: dict[str, list[dict]], images: dict[str, list[dict]]) -> l
                         "search_text": " ".join([product["name"], product["brand"], keyword, *product["tags"]]),
                         "image_url": photo["src"],
                         "image_alt": photo["alt"],
-                        "photographer": photo["photographer"],
-                        "photographer_url": photo["photographer_url"],
-                        "photo_page_url": photo["page_url"],
+                        # 직접 만든 이미지는 출처가 없다. 외부 사진을 쓸 때만 채운다
+                        "photographer": photo.get("photographer", ""),
+                        "photographer_url": photo.get("photographer_url", ""),
+                        "photo_page_url": photo.get("page_url", ""),
                     }
                 )
     return rows
@@ -69,7 +70,7 @@ def auth_headers(key: str) -> dict[str, str]:
 
 
 def main() -> None:
-    for path, script in ((PRODUCTS, "generate_products.py"), (IMAGES, "fetch_images.py")):
+    for path, script in ((PRODUCTS, "generate_products.py"), (IMAGES, "prepare_images.py build")):
         if not path.exists():
             sys.exit(f"{path.relative_to(ROOT)} 이 없어요 — scripts/{script} 를 먼저 실행해 주세요")
     products = json.loads(PRODUCTS.read_text(encoding="utf-8"))
@@ -98,4 +99,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # Windows 터미널(cp949)에서도 한글 · 기호 출력이 깨지거나 멈추지 않게
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
     main()

@@ -134,4 +134,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # Windows 터미널(cp949)에서도 한글 · 기호 출력이 깨지거나 멈추지 않게
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
     main()

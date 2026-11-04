@@ -4,7 +4,7 @@
 
 사용자의 '의도'를 이해하는 AI 검색 비서가 탑재된 E-Commerce 플랫폼입니다.
 
-> 팀 프로젝트 Accio를 Gemini API로 다시 만드는 독립 레포입니다. 프론트는 `frontend/`(Vite + React), 백엔드는 `api/`(FastAPI)에 있고, 검색 상품은 Gemini로 만든 데모용 가상 상품(사진: Unsplash)을 Supabase에 넣어 씁니다.
+> 팀 프로젝트 Accio를 Gemini API로 다시 만드는 독립 레포입니다. 프론트는 `frontend/`(Vite + React), 백엔드는 `api/`(FastAPI)에 있고, 검색 상품은 Gemini로 만든 데모용 가상 상품(이미지: AI 생성)을 Supabase에 넣어 씁니다.
 
 ## 목차
 - [프로젝트 개요](#프로젝트-개요)
