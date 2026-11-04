@@ -78,6 +78,14 @@
 - 지연 측정: 6초 간격으로 따로 재도 1.2~3.3초, 3.1-flash-lite 는 5번 중 시간 초과 3 · 서버 오류 2. 처음 짧은 질문은 0.66초 → 서비스 상태 영향이 큼. 대응: 6초 넘으면 키워드 검색(검색은 멈추지 않음), 같은 검색어 캐시, 화면에 'AI가 검색어를 이해하는 중…'.
 - 화면: 결과 위 '이렇게 이해했어요' 칩(종류 · 특징 · 가격 · 제외), '검색어 그대로 찾기'(mode=keyword)로 해석이 틀렸을 때 사용자가 되돌릴 수 있게. 해석이 늦어 자동으로 키워드 검색이 되면 그 사실을 알림.
 
+## D-6 배포 — Vercel Services + Supabase, 전부 무료 (2026-11-04)
+- 주소: https://accio-two.vercel.app/ (Vercel Hobby · Supabase Free · Gemini 무료 등급, 결제 수단 없음 — 한도를 넘으면 청구가 아니라 멈춤/429)
+- 처음 vercel.json 은 예전 방식(프론트 빌드 + api/ 함수)이었는데, 새 Import 화면이 레포에서 앱 2개(Vite · FastAPI)를 찾아 'Services' 구성을 요구 → services 모델로 바꿈: web(frontend/, Vite, `/`) + api(backend/, FastAPI `accio_api.main:app`, `/api/*`). 서비스는 원래 경로를 그대로 받아 백엔드 라우트(/api/…)를 고칠 필요 없음. 서비스 간 내부 호출이 없어 바인딩 없음.
+- Vercel 이 제안한 예시 설정은 모든 요청을 FastAPI 로 보내고 프론트를 내부용으로 둬서 그대로 쓰면 화면이 안 뜸 → 직접 구성.
+- 함정: Import 화면이 처음엔 Root Directory 를 backend 로 잡아 백엔드만 배포하려 함 → 루트(./) + Services 프리셋으로.
+- Supabase 무료 프로젝트가 7일 무요청으로 잠들지 않게 Vercel Cron 이 매일 /api/health/db 호출.
+- 배포에서 시험지: precision@5 0.938(로컬 S1b 0.932와 같은 수준), 응답 중앙값 1,908ms. 화면: 목록 완성까지 약 2.6초(Gemini 해석), 상세 약 1.4초.
+
 ## 운영 메모
 - git push 가 가끔 첫 시도에 실패하고 재시도하면 됨(원격 앞선 커밋 없음, 원인 미확인).
 - Supabase 키는 새 형식(sb_publishable_ / sb_secret_). 서버는 publishable(읽기), 적재 스크립트만 secret.

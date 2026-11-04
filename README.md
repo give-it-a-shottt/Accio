@@ -21,6 +21,7 @@
 ![팀원 소개](docs/Aciio이미지0.png)
 
 ### 프로젝트 링크
+- **다시 만든 Accio(배포): https://accio-two.vercel.app/** — Gemini 질의 해석 검색 · 데모용 가상 상품 1,100개
 - 포트폴리오 안 Accio: https://accio-project-one.vercel.app/#/accio
 - 팀 프로젝트 원본(v1, 목 모드): https://accio-project-one.vercel.app/accio-v1/
 - 서비스 당시 주소 https://accio.life/ 는 서버가 닫혀 지금은 열리지 않습니다.

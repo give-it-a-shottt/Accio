@@ -1,0 +1,1810 @@
+{
+ "fallbacks": 1,
+ "precision_at_5": 0.938,
+ "first_hit_rate": 0.967,
+ "median_ms": 1908,
+ "by_type": {
+  "attribute": 0.875,
+  "exclude": 1.0,
+  "plain": 1.0,
+  "price": 0.92,
+  "situation": 0.978
+ },
+ "results": [
+  {
+   "id": "Q01",
+   "type": "plain",
+   "query": "캠핑 의자",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1738,
+   "top": [
+    {
+     "id": "g-0702",
+     "name": "초경량 네이비 로우 캠핑 체어",
+     "keyword": "캠핑 의자",
+     "price": 32000,
+     "fail": []
+    },
+    {
+     "id": "g-0705",
+     "name": "컴팩트 네이비 알루미늄 로우 체어",
+     "keyword": "캠핑 의자",
+     "price": 28000,
+     "fail": []
+    },
+    {
+     "id": "g-0719",
+     "name": "스탠다드 카키 그린 접이식 캠핑 체어",
+     "keyword": "캠핑 의자",
+     "price": 37000,
+     "fail": []
+    },
+    {
+     "id": "g-0711",
+     "name": "초경량 알루미늄 로우 체어 네이비",
+     "keyword": "캠핑 의자",
+     "price": 29900,
+     "fail": []
+    },
+    {
+     "id": "g-0701",
+     "name": "카키 그린 접이식 캠핑 암체어 컵홀더 포함",
+     "keyword": "캠핑 의자",
+     "price": 45000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "캠핑 의자"
+    ],
+    "terms": [],
+    "category": "캠핑",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q02",
+   "type": "plain",
+   "query": "무선 이어폰",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1680,
+   "top": [
+    {
+     "id": "g-0611",
+     "name": "프로 프리미엄 블랙 오픈이어 이어폰",
+     "keyword": "무선 이어폰",
+     "price": 99000,
+     "fail": []
+    },
+    {
+     "id": "g-0606",
+     "name": "초경량 마그네틱 넥밴드 이어폰 그레이",
+     "keyword": "무선 이어폰",
+     "price": 28000,
+     "fail": []
+    },
+    {
+     "id": "g-0609",
+     "name": "대용량 배터리 넥밴드 이어폰 그레이",
+     "keyword": "무선 이어폰",
+     "price": 39000,
+     "fail": []
+    },
+    {
+     "id": "g-0604",
+     "name": "패브릭 커버 베이지 노이즈캔슬링 이어폰",
+     "keyword": "무선 이어폰",
+     "price": 89000,
+     "fail": []
+    },
+    {
+     "id": "g-0615",
+     "name": "마그네틱 스포츠 넥밴드 이어폰 다크그레이",
+     "keyword": "무선 이어폰",
+     "price": 34000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "무선 이어폰"
+    ],
+    "terms": [],
+    "category": "디지털",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q03",
+   "type": "plain",
+   "query": "에어프라이어",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 6944,
+   "top": [
+    {
+     "id": "g-0590",
+     "name": "멀티 쿠킹 대용량 오븐 에어프라이어 18L",
+     "keyword": "에어프라이어",
+     "price": 249000,
+     "fail": []
+    },
+    {
+     "id": "g-0589",
+     "name": "프로페셔널 스마트 블랙 에어프라이어 6L",
+     "keyword": "에어프라이어",
+     "price": 115000,
+     "fail": []
+    },
+    {
+     "id": "g-0595",
+     "name": "듀얼 히팅 대용량 블랙 에어프라이어 8L",
+     "keyword": "에어프라이어",
+     "price": 149000,
+     "fail": []
+    },
+    {
+     "id": "g-0584",
+     "name": "올스텐 투명창 오븐형 에어프라이어 14L",
+     "keyword": "에어프라이어",
+     "price": 215000,
+     "fail": []
+    },
+    {
+     "id": "g-0599",
+     "name": "로티세리 대형 오븐형 에어프라이어 17L",
+     "keyword": "에어프라이어",
+     "price": 220000,
+     "fail": []
+    }
+   ],
+   "mode": "keyword",
+   "fallback": "timeout",
+   "interpreted": null
+  },
+  {
+   "id": "Q04",
+   "type": "plain",
+   "query": "샤인머스캣",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1908,
+   "top": [
+    {
+     "id": "g-0203",
+     "name": "명절 감동 선물용 고급 보자기 샤인머스캣 3kg",
+     "keyword": "샤인머스캣",
+     "price": 79000,
+     "fail": []
+    },
+    {
+     "id": "g-0219",
+     "name": "프리미엄 황금빛 숙성 샤인머스캣 2kg",
+     "keyword": "샤인머스캣",
+     "price": 45000,
+     "fail": []
+    },
+    {
+     "id": "g-0209",
+     "name": "달콤망고향 가득한 프리미엄 샤인머스캣 2kg",
+     "keyword": "샤인머스캣",
+     "price": 42000,
+     "fail": []
+    },
+    {
+     "id": "g-0213",
+     "name": "당도폭발 산지직송 프리미엄 샤인머스캣 2kg",
+     "keyword": "샤인머스캣",
+     "price": 41000,
+     "fail": []
+    },
+    {
+     "id": "g-0220",
+     "name": "특급 명절 보자기 포장 샤인머스캣 선물세트 3.5kg",
+     "keyword": "샤인머스캣",
+     "price": 88000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "샤인머스캣"
+    ],
+    "terms": [],
+    "category": "식품",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q05",
+   "type": "plain",
+   "query": "캣타워",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1890,
+   "top": [
+    {
+     "id": "g-0803",
+     "name": "콤팩트 그레이 2단 해먹 캣타워",
+     "keyword": "캣타워",
+     "price": 38000,
+     "fail": []
+    },
+    {
+     "id": "g-0807",
+     "name": "프리미엄 로얄 베이지 캣타워",
+     "keyword": "캣타워",
+     "price": 159000,
+     "fail": []
+    },
+    {
+     "id": "g-0809",
+     "name": "실속형 그레이 2단 낮잠 캣타워",
+     "keyword": "캣타워",
+     "price": 29900,
+     "fail": []
+    },
+    {
+     "id": "g-0806",
+     "name": "초소형 미니 그레이 해먹 캣타워",
+     "keyword": "캣타워",
+     "price": 34000,
+     "fail": []
+    },
+    {
+     "id": "g-0816",
+     "name": "그랜드 베이지 캣타워 놀이터",
+     "keyword": "캣타워",
+     "price": 139000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "캣타워"
+    ],
+    "terms": [],
+    "category": "반려동물",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q06",
+   "type": "attribute",
+   "query": "캠핑 갈 때 쓸 가벼운 의자",
+   "precision": 0.6,
+   "first_hit": true,
+   "ms": 2261,
+   "top": [
+    {
+     "id": "g-0702",
+     "name": "초경량 네이비 로우 캠핑 체어",
+     "keyword": "캠핑 의자",
+     "price": 32000,
+     "fail": []
+    },
+    {
+     "id": "g-0705",
+     "name": "컴팩트 네이비 알루미늄 로우 체어",
+     "keyword": "캠핑 의자",
+     "price": 28000,
+     "fail": []
+    },
+    {
+     "id": "g-0711",
+     "name": "초경량 알루미늄 로우 체어 네이비",
+     "keyword": "캠핑 의자",
+     "price": 29900,
+     "fail": []
+    },
+    {
+     "id": "g-0719",
+     "name": "스탠다드 카키 그린 접이식 캠핑 체어",
+     "keyword": "캠핑 의자",
+     "price": 37000,
+     "fail": [
+      "특징"
+     ]
+    },
+    {
+     "id": "g-0701",
+     "name": "카키 그린 접이식 캠핑 암체어 컵홀더 포함",
+     "keyword": "캠핑 의자",
+     "price": 45000,
+     "fail": [
+      "특징"
+     ]
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "캠핑 의자"
+    ],
+    "terms": [
+     "경량"
+    ],
+    "category": "캠핑",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q07",
+   "type": "price",
+   "query": "자취방에 둘 저렴한 무드등",
+   "precision": 0.8,
+   "first_hit": true,
+   "ms": 1722,
+   "top": [
+    {
+     "id": "g-1004",
+     "name": "미니멀 우드 받침 버섯 모양 단스탠드",
+     "keyword": "무드등",
+     "price": 19800,
+     "fail": []
+    },
+    {
+     "id": "g-1019",
+     "name": "파스텔 컬러 버섯 디자인 무드등",
+     "keyword": "무드등",
+     "price": 25000,
+     "fail": []
+    },
+    {
+     "id": "g-1002",
+     "name": "내추럴 라탄 갓 감성 테이블 스탠드 무드등",
+     "keyword": "무드등",
+     "price": 28900,
+     "fail": []
+    },
+    {
+     "id": "g-1010",
+     "name": "우드 링 포인트 버섯 모양 스탠드",
+     "keyword": "무드등",
+     "price": 27000,
+     "fail": []
+    },
+    {
+     "id": "g-1018",
+     "name": "스모키 투명 유리 무선 디머 무드등",
+     "keyword": "무드등",
+     "price": 55000,
+     "fail": [
+      "가격"
+     ]
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "무드등"
+    ],
+    "terms": [
+     "가성비",
+     "자취방"
+    ],
+    "category": "가구",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q08",
+   "type": "situation",
+   "query": "비 오는 날 신을 운동화",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1955,
+   "top": [
+    {
+     "id": "g-0078",
+     "name": "아웃도어 다크 마운틴 방수화",
+     "keyword": "방수 운동화",
+     "price": 86000,
+     "fail": []
+    },
+    {
+     "id": "g-0072",
+     "name": "나이트쉐이드 블랙 방수 트레일화",
+     "keyword": "방수 운동화",
+     "price": 88000,
+     "fail": []
+    },
+    {
+     "id": "g-0066",
+     "name": "다크 나이트 방수 트레일러닝화",
+     "keyword": "방수 운동화",
+     "price": 99000,
+     "fail": []
+    },
+    {
+     "id": "g-0064",
+     "name": "미니멀 화이트 방수 천연가죽 스니커즈",
+     "keyword": "방수 운동화",
+     "price": 110000,
+     "fail": []
+    },
+    {
+     "id": "g-0077",
+     "name": "에어로 스톰 방수 쿠션 러닝화",
+     "keyword": "방수 운동화",
+     "price": 92000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "방수 운동화"
+    ],
+    "terms": [
+     "방수",
+     "방수화"
+    ],
+    "category": "패션",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q09",
+   "type": "price",
+   "query": "3만원대 집들이 선물",
+   "precision": 0.8,
+   "first_hit": false,
+   "ms": 2025,
+   "top": [
+    {
+     "id": "g-0383",
+     "name": "우드그레인 저소음 초음파 아로마 가습 디퓨저",
+     "keyword": "디퓨저",
+     "price": 35000,
+     "fail": [
+      "특징"
+     ]
+    },
+    {
+     "id": "g-1009",
+     "name": "크리스탈 유리 볼 구슬 수면등",
+     "keyword": "무드등",
+     "price": 38000,
+     "fail": []
+    },
+    {
+     "id": "g-0399",
+     "name": "대용량 앰버 갈색병 프리미엄 디퓨저",
+     "keyword": "디퓨저",
+     "price": 32000,
+     "fail": []
+    },
+    {
+     "id": "g-1001",
+     "name": "북유럽 감성 우드 버섯 유리 무드등 수면등",
+     "keyword": "무드등",
+     "price": 32000,
+     "fail": []
+    },
+    {
+     "id": "g-1011",
+     "name": "내추럴 우븐 라탄 실내 수면등",
+     "keyword": "무드등",
+     "price": 33000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "디퓨저",
+     "텀블러",
+     "무드등"
+    ],
+    "terms": [
+     "집들이",
+     "선물"
+    ],
+    "category": null,
+    "priceMin": 30000,
+    "priceMax": 39999,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q10",
+   "type": "attribute",
+   "query": "대용량 화장지",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 4013,
+   "top": [
+    {
+     "id": "g-0312",
+     "name": "대용량 벌크형 화장지 50롤 메가팩",
+     "keyword": "화장지",
+     "price": 34900,
+     "fail": []
+    },
+    {
+     "id": "g-0301",
+     "name": "도톰한 3겹 순수 펄프 화장지 30롤 대용량",
+     "keyword": "화장지",
+     "price": 18900,
+     "fail": []
+    },
+    {
+     "id": "g-0308",
+     "name": "대용량 패밀리 팩 순백 화장지 3세대 40롤",
+     "keyword": "화장지",
+     "price": 27500,
+     "fail": []
+    },
+    {
+     "id": "g-0316",
+     "name": "대용량 패밀리 무형광 화장지 36롤",
+     "keyword": "화장지",
+     "price": 23900,
+     "fail": []
+    },
+    {
+     "id": "g-0319",
+     "name": "초대용량 업소용 및 패밀리 롤티슈 45롤",
+     "keyword": "화장지",
+     "price": 31000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "화장지"
+    ],
+    "terms": [
+     "대용량"
+    ],
+    "category": "생활",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q11",
+   "type": "price",
+   "query": "5만원 이하 캠핑 테이블",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1982,
+   "top": [
+    {
+     "id": "g-0748",
+     "name": "휴대용 대나무 우드 사이드 미니 캠핑 테이블",
+     "keyword": "캠핑 테이블",
+     "price": 38000,
+     "fail": []
+    },
+    {
+     "id": "g-0742",
+     "name": "미니 원목 우드 사이드 캠핑 테이블 솔캠 차박용",
+     "keyword": "캠핑 테이블",
+     "price": 32000,
+     "fail": []
+    },
+    {
+     "id": "g-0754",
+     "name": "컴팩트 우드 로우 사이드 캠핑 테이블",
+     "keyword": "캠핑 테이블",
+     "price": 35000,
+     "fail": []
+    },
+    {
+     "id": "g-0757",
+     "name": "우드 핸드메이드 감성 로우 사이드 테이블",
+     "keyword": "캠핑 테이블",
+     "price": 42000,
+     "fail": []
+    },
+    {
+     "id": "g-0745",
+     "name": "초경량 우드 로우 사이드 캠핑 테이블 미니멀",
+     "keyword": "캠핑 테이블",
+     "price": 28000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "캠핑 테이블"
+    ],
+    "terms": [],
+    "category": "캠핑",
+    "priceMin": null,
+    "priceMax": 50000,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q12",
+   "type": "situation",
+   "query": "아이 피부에 순한 로션",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 2329,
+   "top": [
+    {
+     "id": "g-0921",
+     "name": "저자극 고보습 베이비 로션 펌프형",
+     "keyword": "유아 로션",
+     "price": 18500,
+     "fail": []
+    },
+    {
+     "id": "g-0922",
+     "name": "순한 신생아 고보습 크림 튜브형",
+     "keyword": "유아 로션",
+     "price": 14200,
+     "fail": []
+    },
+    {
+     "id": "g-0930",
+     "name": "내추럴 오트밀 베이비 로션 저자극형",
+     "keyword": "유아 로션",
+     "price": 19800,
+     "fail": []
+    },
+    {
+     "id": "g-0924",
+     "name": "무향 안심 베이비 로션 대용량",
+     "keyword": "유아 로션",
+     "price": 22000,
+     "fail": []
+    },
+    {
+     "id": "g-0933",
+     "name": "약산성 순둥이 베이비 로션 펌프",
+     "keyword": "유아 로션",
+     "price": 17000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "유아 로션"
+    ],
+    "terms": [
+     "순한",
+     "저자극"
+    ],
+    "category": "유아동",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q13",
+   "type": "attribute",
+   "query": "강아지 덴탈껌",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1839,
+   "top": [
+    {
+     "id": "g-0855",
+     "name": "오이지오 딥클린 덴탈 체 스틱 대용량",
+     "keyword": "강아지 간식",
+     "price": 16900,
+     "fail": []
+    },
+    {
+     "id": "g-0856",
+     "name": "클로렐라 그린 덴탈 치이즈 스틱 20개입",
+     "keyword": "강아지 간식",
+     "price": 11500,
+     "fail": []
+    },
+    {
+     "id": "g-0843",
+     "name": "프리미엄 덴탈 치킨 치즈 뼈형 비스킷 간식",
+     "keyword": "강아지 간식",
+     "price": 9900,
+     "fail": []
+    },
+    {
+     "id": "g-0858",
+     "name": "연어 오메가 덴탈 츄잉 스틱 25개입",
+     "keyword": "강아지 간식",
+     "price": 15000,
+     "fail": []
+    },
+    {
+     "id": "g-0857",
+     "name": "밀크 칼슘 하드 덴탈츄 스틱 400g",
+     "keyword": "강아지 간식",
+     "price": 13900,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "강아지 간식"
+    ],
+    "terms": [
+     "덴탈",
+     "치석"
+    ],
+    "category": "반려동물",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q14",
+   "type": "attribute",
+   "query": "먼지 안 날리는 고양이 모래",
+   "precision": 0.75,
+   "first_hit": true,
+   "ms": 1998,
+   "top": [
+    {
+     "id": "g-0891",
+     "name": "프리미엄 벤토나이트 로얄 샌드 10kg",
+     "keyword": "고양이 모래",
+     "price": 22000,
+     "fail": []
+    },
+    {
+     "id": "g-0881",
+     "name": "프리미엄 벤토나이트 고양이 모래 무향 6kg",
+     "keyword": "고양이 모래",
+     "price": 14900,
+     "fail": []
+    },
+    {
+     "id": "g-0900",
+     "name": "프리미엄 무향 벤토나이트 믹스 8kg",
+     "keyword": "고양이 모래",
+     "price": 18000,
+     "fail": []
+    },
+    {
+     "id": "g-0889",
+     "name": "내추럴 베이직 두부 모래 오리지널 6L",
+     "keyword": "고양이 모래",
+     "price": 6500,
+     "fail": [
+      "특징"
+     ]
+    },
+    {
+     "id": "g-0898",
+     "name": "오트밀 천연 두부모래 7L 3개 묶음",
+     "keyword": "고양이 모래",
+     "price": 21000,
+     "fail": [
+      "특징"
+     ]
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "고양이 모래"
+    ],
+    "terms": [
+     "먼지없는",
+     "저먼지"
+    ],
+    "category": "반려동물",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q15",
+   "type": "attribute",
+   "query": "클릭 소리 안 나는 마우스",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 2079,
+   "top": [
+    {
+     "id": "g-0661",
+     "name": "아이보리 무소음 인체공학 무선 마우스",
+     "keyword": "무선 마우스",
+     "price": 28900,
+     "fail": []
+    },
+    {
+     "id": "g-0662",
+     "name": "슬림 플랫 무소음 핑크 무선 마우스",
+     "keyword": "무선 마우스",
+     "price": 19800,
+     "fail": []
+    },
+    {
+     "id": "g-0674",
+     "name": "핑크 마카롱 저소음 무선 마우스",
+     "keyword": "무선 마우스",
+     "price": 16900,
+     "fail": []
+    },
+    {
+     "id": "g-0664",
+     "name": "오프화이트 충전식 저소음 무선 마우스",
+     "keyword": "무선 마우스",
+     "price": 32000,
+     "fail": []
+    },
+    {
+     "id": "g-0671",
+     "name": "베이비핑크 저소음 무선 마우스",
+     "keyword": "무선 마우스",
+     "price": 21000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "무선 마우스"
+    ],
+    "terms": [
+     "무소음",
+     "저소음"
+    ],
+    "category": "디지털",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q16",
+   "type": "situation",
+   "query": "겨울에 덮을 따뜻한 이불",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1714,
+   "top": [
+    {
+     "id": "g-0344",
+     "name": "프리미엄 헤비웨이트 베이지 양면 극세사 이불",
+     "keyword": "극세사 이불",
+     "price": 79000,
+     "fail": []
+    },
+    {
+     "id": "g-0348",
+     "name": "차분한 챠콜그레이 극세사 이불 커버 세트",
+     "keyword": "극세사 이불",
+     "price": 72000,
+     "fail": []
+    },
+    {
+     "id": "g-0350",
+     "name": "클래식 베이지 헤비 극세사 이불",
+     "keyword": "극세사 이불",
+     "price": 62000,
+     "fail": []
+    },
+    {
+     "id": "g-0358",
+     "name": "베이비핑크 소프트 밍크극세사 이불",
+     "keyword": "극세사 이불",
+     "price": 46000,
+     "fail": []
+    },
+    {
+     "id": "g-0351",
+     "name": "모던 그레이 프리미엄 극세사 이불 세트",
+     "keyword": "극세사 이불",
+     "price": 85000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "극세사 이불"
+    ],
+    "terms": [
+     "겨울",
+     "따뜻한"
+    ],
+    "category": "생활",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q17",
+   "type": "situation",
+   "query": "사무실 책상 밑에 둘 히터",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1839,
+   "top": [
+    {
+     "id": "g-0521",
+     "name": "초소형 저소음 탁상용 미니 히터",
+     "keyword": "미니 히터",
+     "price": 28900,
+     "fail": []
+    },
+    {
+     "id": "g-0524",
+     "name": "스마트 온도조절 데스크탑 미니 히터",
+     "keyword": "미니 히터",
+     "price": 34000,
+     "fail": []
+    },
+    {
+     "id": "g-0530",
+     "name": "에코 사계절 미니 히터 앤 쿨러",
+     "keyword": "미니 히터",
+     "price": 38000,
+     "fail": []
+    },
+    {
+     "id": "g-0532",
+     "name": "스위트룸 원형 할로겐 히터",
+     "keyword": "미니 히터",
+     "price": 47000,
+     "fail": []
+    },
+    {
+     "id": "g-0529",
+     "name": "소프트글로우 크림 할로겐 히터",
+     "keyword": "미니 히터",
+     "price": 42000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "미니 히터"
+    ],
+    "terms": [
+     "사무실",
+     "책상용",
+     "소형"
+    ],
+    "category": "가전",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q18",
+   "type": "attribute",
+   "query": "혼자 쓰기 좋은 작은 에어프라이어",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1919,
+   "top": [
+    {
+     "id": "g-0582",
+     "name": "초소형 미니 화이트 에어프라이어 2L",
+     "keyword": "에어프라이어",
+     "price": 49000,
+     "fail": []
+    },
+    {
+     "id": "g-0591",
+     "name": "원터치 스마트 미니 에어프라이어 3L",
+     "keyword": "에어프라이어",
+     "price": 68000,
+     "fail": []
+    },
+    {
+     "id": "g-0594",
+     "name": "퀵클린 미니 유리창 에어프라이어 3.2L",
+     "keyword": "에어프라이어",
+     "price": 72000,
+     "fail": []
+    },
+    {
+     "id": "g-0585",
+     "name": "1인용 저소음 미니 에어프라이어 3.5L",
+     "keyword": "에어프라이어",
+     "price": 62000,
+     "fail": []
+    },
+    {
+     "id": "g-0600",
+     "name": "스마트 뷰 화이트 미니 에어프라이어 3L",
+     "keyword": "에어프라이어",
+     "price": 65000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "에어프라이어"
+    ],
+    "terms": [
+     "소형",
+     "미니",
+     "1인가구"
+    ],
+    "category": "가전",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q19",
+   "type": "price",
+   "query": "10만원 이하 무선 청소기",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1722,
+   "top": [
+    {
+     "id": "g-0566",
+     "name": "강력 흡입 파워 핸디 미니 무선 청소기 에어건 기능",
+     "keyword": "무선 청소기",
+     "price": 45000,
+     "fail": []
+    },
+    {
+     "id": "g-0568",
+     "name": "가성비 초경량 스틱형 무선 청소기",
+     "keyword": "무선 청소기",
+     "price": 79000,
+     "fail": []
+    },
+    {
+     "id": "g-0561",
+     "name": "초경량 핸디 무선 청소기 원룸 차량용 미니",
+     "keyword": "무선 청소기",
+     "price": 38900,
+     "fail": []
+    },
+    {
+     "id": "g-0570",
+     "name": "침구 전용 UV 살균 무선 핸디 청소기 매트리스용",
+     "keyword": "무선 청소기",
+     "price": 98000,
+     "fail": []
+    },
+    {
+     "id": "g-0574",
+     "name": "미니멀 디자인 차량용 핸디 무선 청소기",
+     "keyword": "무선 청소기",
+     "price": 34000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "무선 청소기"
+    ],
+    "terms": [],
+    "category": "가전",
+    "priceMin": null,
+    "priceMax": 100000,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q20",
+   "type": "exclude",
+   "query": "접이식 말고 튼튼한 캠핑 의자",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1762,
+   "top": [
+    {
+     "id": "g-0707",
+     "name": "올웨더 카키 그린 튼튼한 캠핑 암체어",
+     "keyword": "캠핑 의자",
+     "price": 39000,
+     "fail": []
+    },
+    {
+     "id": "g-0702",
+     "name": "초경량 네이비 로우 캠핑 체어",
+     "keyword": "캠핑 의자",
+     "price": 32000,
+     "fail": []
+    },
+    {
+     "id": "g-0705",
+     "name": "컴팩트 네이비 알루미늄 로우 체어",
+     "keyword": "캠핑 의자",
+     "price": 28000,
+     "fail": []
+    },
+    {
+     "id": "g-0711",
+     "name": "초경량 알루미늄 로우 체어 네이비",
+     "keyword": "캠핑 의자",
+     "price": 29900,
+     "fail": []
+    },
+    {
+     "id": "g-0709",
+     "name": "내추럴 우드 캔버스 하이백 릴렉스 체어",
+     "keyword": "캠핑 의자",
+     "price": 125000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "캠핑 의자"
+    ],
+    "terms": [
+     "튼튼한",
+     "견고한"
+    ],
+    "category": "캠핑",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": [
+     "접이식"
+    ]
+   }
+  },
+  {
+   "id": "Q21",
+   "type": "situation",
+   "query": "선물하기 좋은 핸드크림",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 2133,
+   "top": [
+    {
+     "id": "g-0186",
+     "name": "울트라 너리싱 핸드 버터 글래스 자",
+     "keyword": "핸드크림",
+     "price": 28000,
+     "fail": []
+    },
+    {
+     "id": "g-0200",
+     "name": "드림랜드 핸드크림 파스텔 에디션 세트",
+     "keyword": "핸드크림",
+     "price": 23000,
+     "fail": []
+    },
+    {
+     "id": "g-0182",
+     "name": "시어버터 고영양 핸드크림 3종 미니 세트",
+     "keyword": "핸드크림",
+     "price": 24000,
+     "fail": []
+    },
+    {
+     "id": "g-0194",
+     "name": "소프트 가든 핸드크림 파스텔 3종 세트",
+     "keyword": "핸드크림",
+     "price": 22000,
+     "fail": []
+    },
+    {
+     "id": "g-0191",
+     "name": "퓨어 코튼 핸드크림 트래블 미니 3종 세트",
+     "keyword": "핸드크림",
+     "price": 17500,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "핸드크림"
+    ],
+    "terms": [
+     "선물용",
+     "선물"
+    ],
+    "category": "뷰티",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q22",
+   "type": "attribute",
+   "query": "커피 오래 따뜻한 텀블러",
+   "precision": 0.4,
+   "first_hit": true,
+   "ms": 1473,
+   "top": [
+    {
+     "id": "g-0475",
+     "name": "대용량 스트로형 세이지그린 보냉병",
+     "keyword": "텀블러",
+     "price": 31000,
+     "fail": []
+    },
+    {
+     "id": "g-0471",
+     "name": "원터치 버튼 크림화이트 보온 텀블러",
+     "keyword": "텀블러",
+     "price": 25000,
+     "fail": []
+    },
+    {
+     "id": "g-0464",
+     "name": "원터치 세이지그린 대용량 텀블러",
+     "keyword": "텀블러",
+     "price": 32000,
+     "fail": [
+      "특징"
+     ]
+    },
+    {
+     "id": "g-0461",
+     "name": "대용량 세이지그린 빨대 스테인리스 텀블러",
+     "keyword": "텀블러",
+     "price": 28900,
+     "fail": [
+      "특징"
+     ]
+    },
+    {
+     "id": "g-0470",
+     "name": "그립감 좋은 세이지그린 스트로 텀블러",
+     "keyword": "텀블러",
+     "price": 29900,
+     "fail": [
+      "특징"
+     ]
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "텀블러"
+    ],
+    "terms": [
+     "보온",
+     "보냉",
+     "대용량"
+    ],
+    "category": "주방",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q23",
+   "type": "situation",
+   "query": "아기 이유식 먹일 식판",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1748,
+   "top": [
+    {
+     "id": "g-0941",
+     "name": "파스텔 흡착 실리콘 유아 식판 식기 세트 미디엄",
+     "keyword": "유아 식기",
+     "price": 28900,
+     "fail": []
+    },
+    {
+     "id": "g-0953",
+     "name": "베이직 실리콘 이유식 유아 식기 풀패키지",
+     "keyword": "유아 식기",
+     "price": 27500,
+     "fail": []
+    },
+    {
+     "id": "g-0947",
+     "name": "실리콘 유아 식기 흡착 플레이트 런치팩",
+     "keyword": "유아 식기",
+     "price": 31000,
+     "fail": []
+    },
+    {
+     "id": "g-0943",
+     "name": "친환경 대나무 유아 식기 흡착 볼 스푼 세트",
+     "keyword": "유아 식기",
+     "price": 24500,
+     "fail": []
+    },
+    {
+     "id": "g-0944",
+     "name": "모던 파스텔 실리콘 유아 흡착 식기 풀세트",
+     "keyword": "유아 식기",
+     "price": 39000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "유아 식기"
+    ],
+    "terms": [
+     "이유식",
+     "아기"
+    ],
+    "category": "유아동",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q24",
+   "type": "attribute",
+   "query": "원룸 틈새에 들어가는 수납장",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1711,
+   "top": [
+    {
+     "id": "g-1042",
+     "name": "틈새 공략 3단 이동식 슬림 수납 카트",
+     "keyword": "수납장",
+     "price": 28900,
+     "fail": []
+    },
+    {
+     "id": "g-1051",
+     "name": "다용도 슬림 3단 바퀴형 틈새 수납장",
+     "keyword": "수납장",
+     "price": 26500,
+     "fail": []
+    },
+    {
+     "id": "g-1057",
+     "name": "프리미엄 3단 슬림 이동식 틈새 수납함",
+     "keyword": "수납장",
+     "price": 33000,
+     "fail": []
+    },
+    {
+     "id": "g-1045",
+     "name": "초슬림 3단 다목적 틈새 수납 카트",
+     "keyword": "수납장",
+     "price": 24900,
+     "fail": []
+    },
+    {
+     "id": "g-1054",
+     "name": "히든 스페이스 3단 슬림 틈새 수납 카트",
+     "keyword": "수납장",
+     "price": 29900,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "수납장"
+    ],
+    "terms": [
+     "원룸",
+     "틈새"
+    ],
+    "category": "가구",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q25",
+   "type": "situation",
+   "query": "등산할 때 입을 비 막아주는 자켓",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1958,
+   "top": [
+    {
+     "id": "g-0084",
+     "name": "3레이어 방수 투습 트레킹 자켓",
+     "keyword": "트레킹 자켓",
+     "price": 142000,
+     "fail": []
+    },
+    {
+     "id": "g-0096",
+     "name": "아웃도어 프리미엄 방수 트레킹 자켓",
+     "keyword": "트레킹 자켓",
+     "price": 135000,
+     "fail": []
+    },
+    {
+     "id": "g-0093",
+     "name": "클래식 방수 후드 트레킹 자켓",
+     "keyword": "트레킹 자켓",
+     "price": 82000,
+     "fail": []
+    },
+    {
+     "id": "g-0087",
+     "name": "고밀도 방수 후드 트레킹 자켓",
+     "keyword": "트레킹 자켓",
+     "price": 68000,
+     "fail": []
+    },
+    {
+     "id": "g-0081",
+     "name": "초경량 패커블 방수 트레킹 자켓",
+     "keyword": "트레킹 자켓",
+     "price": 49000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "트레킹 자켓"
+    ],
+    "terms": [
+     "방수",
+     "등산용"
+    ],
+    "category": "패션",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q26",
+   "type": "attribute",
+   "query": "물에 젖어도 되는 블루투스 스피커",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1377,
+   "top": [
+    {
+     "id": "g-0628",
+     "name": "초강력 방수 레저용 미니 스피커 오렌지",
+     "keyword": "블루투스 스피커",
+     "price": 42000,
+     "fail": []
+    },
+    {
+     "id": "g-0622",
+     "name": "아웃도어 스트랩 방수 미니 스피커 오렌지",
+     "keyword": "블루투스 스피커",
+     "price": 29000,
+     "fail": []
+    },
+    {
+     "id": "g-0640",
+     "name": "러기드 방수 아웃도어 스피커 오렌지",
+     "keyword": "블루투스 스피커",
+     "price": 39000,
+     "fail": []
+    },
+    {
+     "id": "g-0625",
+     "name": "충격 방지 아웃도어 스트랩 스피커 오렌지",
+     "keyword": "블루투스 스피커",
+     "price": 34000,
+     "fail": []
+    },
+    {
+     "id": "g-0634",
+     "name": "캠핑용 방수 스트랩 스피커 오렌지",
+     "keyword": "블루투스 스피커",
+     "price": 36000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "블루투스 스피커"
+    ],
+    "terms": [
+     "방수",
+     "방수 스피커"
+    ],
+    "category": "디지털",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q27",
+   "type": "price",
+   "query": "만원 이하 립밤",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1757,
+   "top": [
+    {
+     "id": "g-0160",
+     "name": "무색 클리어 영양 립밤 튜브",
+     "keyword": "립밤",
+     "price": 9900,
+     "fail": []
+    },
+    {
+     "id": "g-0141",
+     "name": "고보습 무향 립밤 스틱",
+     "keyword": "립밤",
+     "price": 8900,
+     "fail": []
+    },
+    {
+     "id": "g-0145",
+     "name": "쿨링 민트 립밤 스틱",
+     "keyword": "립밤",
+     "price": 7500,
+     "fail": []
+    },
+    {
+     "id": "g-0143",
+     "name": "시어버터 고영양 립밤 스틱",
+     "keyword": "립밤",
+     "price": 6500,
+     "fail": []
+    },
+    {
+     "id": "g-0146",
+     "name": "오가닉 아몬드 립밤 스틱",
+     "keyword": "립밤",
+     "price": 9500,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "립밤"
+    ],
+    "terms": [],
+    "category": "뷰티",
+    "priceMin": null,
+    "priceMax": 10000,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q28",
+   "type": "situation",
+   "query": "혼밥할 때 간단한 밀키트",
+   "precision": 0.8,
+   "first_hit": true,
+   "ms": 2087,
+   "top": [
+    {
+     "id": "g-0250",
+     "name": "청정원조 할머니식 깊은맛 부대찌개 밀키트",
+     "keyword": "밀키트",
+     "price": 13900,
+     "fail": []
+    },
+    {
+     "id": "g-0241",
+     "name": "프레시밀크래프트 우삼겹 부대찌개 밀키트 2인분",
+     "keyword": "밀키트",
+     "price": 14900,
+     "fail": [
+      "특징"
+     ]
+    },
+    {
+     "id": "g-0255",
+     "name": "데일리테이블 정갈한 한상 밀키트 박스",
+     "keyword": "밀키트",
+     "price": 19800,
+     "fail": []
+    },
+    {
+     "id": "g-0252",
+     "name": "에코그린 홈셰프 신선 채소 요리 밀키트",
+     "keyword": "밀키트",
+     "price": 16000,
+     "fail": []
+    },
+    {
+     "id": "g-0258",
+     "name": "올데이키친 베이직 쿠킹 밀키트 패키지",
+     "keyword": "밀키트",
+     "price": 14000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "밀키트"
+    ],
+    "terms": [
+     "간단한",
+     "간편"
+    ],
+    "category": "식품",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q29",
+   "type": "attribute",
+   "query": "서서 일할 수 있는 책상",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 1829,
+   "top": [
+    {
+     "id": "g-1023",
+     "name": "전동 높이조절 모션 데스크 월넛 블랙",
+     "keyword": "책상",
+     "price": 389000,
+     "fail": []
+    },
+    {
+     "id": "g-1032",
+     "name": "컴팩트 높이조절 스탠딩 모션 데스크",
+     "keyword": "책상",
+     "price": 279000,
+     "fail": []
+    },
+    {
+     "id": "g-1026",
+     "name": "듀얼 모터 전동 스탠딩 모션 데스크",
+     "keyword": "책상",
+     "price": 459000,
+     "fail": []
+    },
+    {
+     "id": "g-1035",
+     "name": "광폭 월넛 원모션 스탠딩 책상",
+     "keyword": "책상",
+     "price": 419000,
+     "fail": []
+    },
+    {
+     "id": "g-1038",
+     "name": "슬림 싱글모터 전동 모션 데스크",
+     "keyword": "책상",
+     "price": 259000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "책상"
+    ],
+    "terms": [
+     "모션데스크",
+     "높이조절",
+     "스탠딩"
+    ],
+    "category": "가구",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  },
+  {
+   "id": "Q30",
+   "type": "situation",
+   "query": "운동 끝나고 먹을 단백질 간식",
+   "precision": 1.0,
+   "first_hit": true,
+   "ms": 2041,
+   "top": [
+    {
+     "id": "g-0281",
+     "name": "촉촉한 수비드 닭가슴살 오리지널 10팩",
+     "keyword": "닭가슴살",
+     "price": 19800,
+     "fail": []
+    },
+    {
+     "id": "g-0261",
+     "name": "프리미엄 로스팅 구운 아몬드 1kg 대용량",
+     "keyword": "견과류",
+     "price": 18900,
+     "fail": []
+    },
+    {
+     "id": "g-0267",
+     "name": "바삭한 구운 캐슈넛 400g",
+     "keyword": "견과류",
+     "price": 12800,
+     "fail": []
+    },
+    {
+     "id": "g-0273",
+     "name": "허니 로스티드 피칸 400g",
+     "keyword": "견과류",
+     "price": 19800,
+     "fail": []
+    },
+    {
+     "id": "g-0276",
+     "name": "무농약 로스팅 마카다미아 300g",
+     "keyword": "견과류",
+     "price": 24000,
+     "fail": []
+    }
+   ],
+   "mode": "parsed",
+   "fallback": null,
+   "interpreted": {
+    "productTypes": [
+     "닭가슴살",
+     "견과류"
+    ],
+    "terms": [
+     "단백질",
+     "간식",
+     "고단백"
+    ],
+    "category": "식품",
+    "priceMin": null,
+    "priceMax": null,
+    "exclude": []
+   }
+  }
+ ]
+}
