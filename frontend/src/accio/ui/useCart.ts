@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { ALL_PRODUCTS, listPriceOf, PRODUCTS, type Product } from '../data/catalog'
+import { cachedProduct } from './productCache'
 
 // 장바구니 — 화면을 옮겨도 유지되도록 localStorage 에 둔다(목업이라 서버 없이 브라우저에만).
 export interface CartItem {
@@ -56,7 +57,8 @@ function subscribe(notify: () => void) {
   return () => listeners.delete(notify)
 }
 
-export const findProduct = (id: string) => ALL_PRODUCTS.find((p) => p.id === id)
+/** 목 데이터에서 찾고, 없으면 검색 API 로 받아 둔 생성 상품에서 찾는다 */
+export const findProduct = (id: string): Product | undefined => ALL_PRODUCTS.find((p) => p.id === id) ?? cachedProduct(id)
 
 export const cartActions = {
   add(product: Product, option: string, quantity: number) {

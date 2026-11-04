@@ -1,5 +1,5 @@
 // 상품 상세 목데이터 — 시안(초경량 접이식 캠핑 의자)의 옵션·리뷰. 다른 상품은 기본 옵션과 공통 리뷰를 쓴다.
-import { listPriceOf, PRODUCTS, type Product } from './catalog'
+import { listPriceOf, PRODUCTS, type Product, type ProductDetail } from './catalog'
 
 export interface ColorOption {
   name: string
@@ -81,12 +81,56 @@ const GENERIC_REVIEWS: Review[] = [
   { id: 'g3', author: '재구매각', rating: 5, ago: '1달 전', daysAgo: 35, option: '기본', body: '두 번째 구매예요. 크기도 딱 맞고 오래 써도 괜찮네요.', helpful: 3, topics: ['사이즈', '품질'] },
 ]
 
-export function getDetail(product: Product) {
+/** '12일 전' · '3주 전' · '2달 전' — 생성 리뷰의 days_ago 를 목 리뷰와 같은 말로 */
+function agoLabel(days: number) {
+  if (days < 7) return `${days}일 전`
+  if (days < 30) return `${Math.floor(days / 7)}주 전`
+  if (days < 365) return `${Math.floor(days / 30)}달 전`
+  return `${Math.floor(days / 365)}년 전`
+}
+
+const TOPIC_SET = new Set<string>(REVIEW_TOPICS)
+
+/** 생성 상품(검색 API) — 설명 · 스펙 · 리뷰를 API 값으로. 옵션은 없고(사진과 어긋나지 않게),
+ *  AI 리뷰 요약은 P5 에서 이 리뷰를 실제로 요약할 때까지 숨긴다(summary: null) */
+function generatedDetail(product: Product, generated: ProductDetail) {
+  return {
+    title: product.name,
+    options: {} as ProductOptions,
+    summary: null as ReviewSummary | null,
+    reviews: generated.reviews.map(
+      (r): Review => ({
+        id: r.id,
+        author: r.author,
+        rating: r.rating,
+        ago: agoLabel(r.daysAgo),
+        daysAgo: r.daysAgo,
+        option: '기본',
+        body: r.body,
+        highlight: r.highlight ?? undefined,
+        helpful: r.helpful,
+        topics: r.topics.filter((t): t is ReviewTopic => TOPIC_SET.has(t)),
+      }),
+    ),
+    listPrice: listPriceOf(product),
+    points: Math.floor((product.price * 0.01) / 10) * 10,
+    description: [generated.description],
+    specs: [
+      ['브랜드', product.brand],
+      ['분야', product.category],
+      ...generated.specs.map((s): [string, string] => [s.label, s.value]),
+      ['배송', product.delivery?.join(' · ') || '일반배송'],
+    ] as [string, string][],
+  }
+}
+
+export function getDetail(product: Product, generated?: ProductDetail) {
+  if (generated) return generatedDetail(product, generated)
   const isChair = product.id === PRODUCTS.campingChair.id
   return {
     title: product.fullName ?? product.name,
     options: isChair ? CHAIR_OPTIONS : {},
-    summary: isChair ? CHAIR_SUMMARY : GENERIC_SUMMARY,
+    summary: (isChair ? CHAIR_SUMMARY : GENERIC_SUMMARY) as ReviewSummary | null,
     reviews: product.reviewCount === 0 ? [] : isChair ? CHAIR_REVIEWS : GENERIC_REVIEWS,
     listPrice: listPriceOf(product),
     /** 적립 1% (10원 단위 버림) */

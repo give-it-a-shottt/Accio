@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import chevronDownDark from '../assets/v4/icons/chevron-down-dark.svg'
 import chevronDown from '../assets/v4/icons/chevron-down.svg'
 import chevronRightBrand from '../assets/v4/icons/chevron-right-brand.svg'
@@ -6,6 +6,7 @@ import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
 import close14Weak from '../assets/v4/icons/close-14-weak.svg'
 import close14 from '../assets/v4/icons/close-14.svg'
 import filterIcon from '../assets/v4/icons/filter.svg'
+import { ApiError, searchProducts } from '../api'
 import { ALL_PRODUCTS, DELIVERY_OPTIONS, POPULAR_KEYWORDS, type Delivery, type Product } from '../data/catalog'
 import { accioHref } from '../routes'
 import FloatingStack from '../ui/FloatingStack'
@@ -14,7 +15,8 @@ import ProductCard from '../ui/ProductCard'
 import { AiDot, Button, CheckMark, Container } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
-import { StateEmpty } from '../ui/states'
+import { SkeletonCard, StateEmpty } from '../ui/states'
+import { showToast } from '../ui/toast'
 import { chatActions, openAiWidget } from '../ui/useAiChat'
 import { formatCount, formatWon } from '../utils/format'
 
@@ -35,7 +37,10 @@ interface Filters {
 
 const EMPTY_FILTERS: Filters = { categories: [], brands: [], delivery: [], price: [PRICE_MIN, PRICE_MAX] }
 
-/** 검색어가 상품명·브랜드·분야 중 하나에 들어가면 결과로 본다. 띄어쓰기로 나눈 말이 모두 들어가야 한다 */
+/** 검색 결과 출처 — 검색 API(생성 상품) / API 가 안 될 때 목 데이터에서 찾기 */
+type Remote = { status: 'loading' } | { status: 'done'; products: Product[] } | { status: 'fallback' }
+
+/** 목 데이터 검색(API 가 안 될 때) — 상품명·브랜드·분야에 띄어쓰기로 나눈 말이 모두 들어가야 한다 */
 function matches(product: Product, query: string) {
   const haystack = `${product.name} ${product.brand} ${product.category}`.toLowerCase()
   return query
@@ -202,7 +207,29 @@ export default function ListPage({ query = '' }: { query?: string }) {
   const [page, setPage] = useState(1)
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  const base = useMemo(() => (query ? ALL_PRODUCTS.filter((p) => matches(p, query)) : ALL_PRODUCTS), [query])
+  // 검색어가 바뀌면 key 로 화면을 새로 만들기 때문에(AccioApp) 처음 상태만 정하면 된다
+  const [remote, setRemote] = useState<Remote>(query ? { status: 'loading' } : { status: 'fallback' })
+
+  useEffect(() => {
+    if (!query) return
+    const controller = new AbortController()
+    searchProducts(query, controller.signal)
+      .then((result) => setRemote({ status: 'done', products: result.products }))
+      .catch((error: unknown) => {
+        if (!(error instanceof ApiError)) return // 화면을 떠나며 취소한 요청
+        setRemote({ status: 'fallback' })
+        showToast({ message: '검색 서버에 연결하지 못해 예시 상품에서 찾았어요', error: true })
+      })
+    return () => controller.abort()
+  }, [query])
+
+  const loading = remote.status === 'loading'
+  const fromApi = remote.status === 'done'
+  const base = useMemo(() => {
+    if (remote.status === 'done') return remote.products
+    if (remote.status === 'loading') return []
+    return query ? ALL_PRODUCTS.filter((p) => matches(p, query)) : ALL_PRODUCTS
+  }, [remote, query])
 
   const results = useMemo(() => {
     const [low, high] = filters.price
@@ -212,7 +239,8 @@ export default function ListPage({ query = '' }: { query?: string }) {
         (filters.brands.length === 0 || filters.brands.includes(p.brand)) &&
         filters.delivery.every((d) => p.delivery?.includes(d)) &&
         p.price >= low &&
-        p.price <= high,
+        // 슬라이더를 끝까지 두면 상한 없이(생성 상품은 15만원이 넘는 것도 많다)
+        (high >= PRICE_MAX || p.price <= high),
     )
     const sorted = [...filtered]
     if (sort === '인기순') sorted.sort((a, b) => b.reviewCount - a.reviewCount)
@@ -279,10 +307,17 @@ export default function ListPage({ query = '' }: { query?: string }) {
               <span className="text-28 font-semibold text-main">{query ? `‘${query}’` : '전체 상품'}</span>
               <span className="text-18 text-sub-weak">
                 {query ? '검색 결과 ' : ''}
-                {formatCount(results.length)}개
+                {loading ? '찾는 중…' : `${formatCount(results.length)}개`}
               </span>
             </h1>
           </div>
+          {fromApi && (
+            <p className="text-12 text-sub-weak lg:text-13">
+              <span className="hidden lg:inline">검색 상품은 Gemini로 만든 </span>
+              <strong className="font-medium text-sub">데모용 가상 상품</strong>이에요
+              <span className="hidden lg:inline">. 실제로 판매하지 않아요</span>
+            </p>
+          )}
 
           {/* ── 검색창 (모바일) ── */}
           <form role="search" onSubmit={search} className="flex h-11 items-center gap-2 rounded-full bg-light pr-3.5 pl-4 lg:hidden">
@@ -357,7 +392,7 @@ export default function ListPage({ query = '' }: { query?: string }) {
             )}
           </div>
           <div className="flex items-center justify-between lg:hidden">
-            <p className="text-13 font-medium text-sub-weak tabular-nums">{formatCount(results.length)}개</p>
+            <p className="text-13 font-medium text-sub-weak tabular-nums">{loading ? '찾는 중…' : `${formatCount(results.length)}개`}</p>
             <label className="relative flex items-center gap-0.5 text-13 font-medium text-main">
               <span className="sr-only">정렬</span>
               <select
@@ -416,7 +451,13 @@ export default function ListPage({ query = '' }: { query?: string }) {
                 </div>
               </div>
 
-              {visible.length > 0 ? (
+              {loading ? (
+                <div aria-busy="true" aria-label="검색 결과를 불러오는 중" className="grid grid-cols-2 gap-x-3 gap-y-4 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-10">
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <SkeletonCard key={i} />
+                  ))}
+                </div>
+              ) : visible.length > 0 ? (
                 <div className="grid grid-cols-2 gap-x-3 gap-y-4 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-10">
                   {visible.map((product) => (
                     <ProductCard key={product.id} product={product} showAiBadge wideThumbOnMobile />

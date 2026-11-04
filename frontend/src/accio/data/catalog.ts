@@ -52,6 +52,34 @@ export interface Product {
   /** 목록 필터 '배송' 에 걸리는 조건 */
   delivery?: Delivery[]
   soldOut?: boolean
+  /** 'generated' = 검색 API 가 준 데모용 가상 상품(Gemini 생성). 없으면 이 파일의 목 데이터 */
+  source?: 'generated'
+  /** 생성 상품만 — 만들 때 쓴 세부 키워드와 용도 태그 */
+  keyword?: string
+  tags?: string[]
+}
+
+/** 상세 화면용 — 생성 상품의 설명 · 스펙 · 리뷰(API /products/{id}) */
+export interface ProductSpec {
+  label: string
+  value: string
+}
+
+export interface GeneratedReview {
+  id: string
+  author: string
+  rating: number
+  daysAgo: number
+  body: string
+  highlight: string | null
+  helpful: number
+  topics: string[]
+}
+
+export interface ProductDetail extends Product {
+  description: string
+  specs: ProductSpec[]
+  reviews: GeneratedReview[]
 }
 
 export type Delivery = '무료배송' | '오늘 출발' | '내일 도착'

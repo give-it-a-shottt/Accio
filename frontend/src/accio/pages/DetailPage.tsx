@@ -4,7 +4,8 @@ import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
 import heart20On from '../assets/v4/icons/heart-20-on.svg'
 import heartIcon from '../assets/v4/icons/heart.svg'
 import thumbIcon from '../assets/v4/icons/thumb.svg'
-import { ALL_PRODUCTS, PRODUCTS, type Product } from '../data/catalog'
+import { ApiError, getProduct, getRelated } from '../api'
+import { ALL_PRODUCTS, PRODUCTS, type Product, type ProductDetail } from '../data/catalog'
 import { getDetail, REVIEW_TOPICS, SHIPPING_INFO, type Review, type ReviewTopic } from '../data/detail'
 import { accioHref } from '../routes'
 import FloatingStack from '../ui/FloatingStack'
@@ -13,7 +14,7 @@ import { AiDot, Button, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
 import { cartActions, findProduct } from '../ui/useCart'
-import { StateEmpty } from '../ui/states'
+import { Skeleton, StateEmpty } from '../ui/states'
 import { showToast } from '../ui/toast'
 import { recentActions } from '../ui/useMyData'
 import useWishlist from '../ui/useWishlist'
@@ -82,7 +83,7 @@ const summarizedIds = new Set<string>()
  * AI 리뷰 요약 (상태 시안 438:3217) — 저장된 요약이 없으면 '리뷰 N개를 읽는 중…' 스켈레톤을 잠깐 보여 주고,
  * 인터넷이 끊겨 만들지 못하면 다시 시도 카드를 띄운다. 실패해도 아래 일반 리뷰는 그대로 보인다.
  */
-function AiReviewSummary({ product, summary }: { product: Product; summary: ReturnType<typeof getDetail>['summary'] }) {
+function AiReviewSummary({ product, summary }: { product: Product; summary: NonNullable<ReturnType<typeof getDetail>['summary']> }) {
   const [status, setStatus] = useState<'loading' | 'done' | 'error'>(() => (summarizedIds.has(product.id) ? 'done' : 'loading'))
 
   useEffect(() => {
@@ -186,13 +187,13 @@ function ReviewSection({ product, detail }: { product: Product; detail: ReturnTy
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
-      {/* 평점 분포 (PC) */}
+      {/* 평점 분포 (PC) — 생성 상품은 대표 리뷰 몇 개뿐이라 분포를 그리지 않는다 */}
       <div className="hidden w-[282px] shrink-0 flex-col gap-2.5 lg:flex">
         <p className="text-48 font-semibold text-main">{product.rating.toFixed(1)}</p>
         <p className="text-14 text-sub">
           {stars(product.rating)}&nbsp;&nbsp;리뷰 {formatCount(product.reviewCount)}개
         </p>
-        {summary.distribution.map((percent, i) => (
+        {summary?.distribution.map((percent, i) => (
           <div key={i} className="flex items-center gap-2">
             <span className="w-7 text-12 text-sub">{5 - i}점</span>
             <span className="relative h-1.5 w-50 overflow-hidden rounded-[3px] bg-regular">
@@ -204,7 +205,14 @@ function ReviewSection({ product, detail }: { product: Product; detail: ReturnTy
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-5">
-        <AiReviewSummary product={product} summary={summary} />
+        {summary ? (
+          <AiReviewSummary product={product} summary={summary} />
+        ) : (
+          <p className="flex items-center gap-2 rounded-[10px] bg-light px-3.5 py-3 text-12 text-sub-weak lg:text-13">
+            <AiDot size={10} muted />
+            데모 상품이라 대표 리뷰 {detail.reviews.length}개만 보여요. AI 리뷰 요약은 곧 열려요
+          </p>
+        )}
 
         {/* 주제 칩 · 정렬 */}
         <div className="flex items-center justify-between gap-3">
@@ -273,8 +281,65 @@ function InfoTable({ rows }: { rows: [string, string][] }) {
  * 모바일은 아래 고정 구매 바에서 옵션 시트를 연다.
  */
 export default function DetailPage({ productId }: { productId?: string }) {
+  // 'g-0001' 같은 생성 상품은 설명 · 스펙 · 리뷰를 검색 API 에서 받는다
+  if (productId?.startsWith('g-')) return <GeneratedDetailPage productId={productId} />
   const product = productId ? findProduct(productId) : PRODUCTS.campingChair
   return product ? <DetailView product={product} /> : <DetailNotFound />
+}
+
+type Loaded =
+  | { status: 'loading' }
+  | { status: 'done'; detail: ProductDetail; related: Product[] }
+  | { status: 'missing' }
+  | { status: 'error' }
+
+/** 생성 상품 상세 — API 로 받아서 같은 DetailView 로 그린다. 상품을 바꾸면 AccioApp 이 key 로 새로 만든다 */
+function GeneratedDetailPage({ productId }: { productId: string }) {
+  const [state, setState] = useState<Loaded>({ status: 'loading' })
+
+  useEffect(() => {
+    const controller = new AbortController()
+    Promise.all([getProduct(productId, controller.signal), getRelated(productId, controller.signal).catch(() => [])])
+      .then(([detail, related]) => setState({ status: 'done', detail, related }))
+      .catch((error: unknown) => {
+        if (!(error instanceof ApiError)) return // 화면을 떠나며 취소한 요청
+        setState({ status: error.status === 404 ? 'missing' : 'error' })
+      })
+    return () => controller.abort()
+  }, [productId])
+
+  if (state.status === 'done') return <DetailView product={state.detail} generated={state.detail} relatedProducts={state.related} />
+  if (state.status === 'missing') return <DetailNotFound />
+  return (
+    <div className="flex min-h-svh flex-col bg-white">
+      <SiteHeader mobileTitle="" />
+      <main className="flex flex-1 flex-col">
+        {state.status === 'loading' ? (
+          <Container className="max-lg:px-0 lg:pt-10">
+            <div aria-busy="true" aria-label="상품 정보를 불러오는 중" className="flex flex-col gap-5 lg:flex-row lg:gap-12">
+              <Skeleton className="aspect-square w-full lg:size-[588px] lg:rounded-lg" />
+              <div className="flex flex-1 flex-col gap-3 px-5 lg:px-0">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-7 w-3/4" />
+                <Skeleton className="h-8 w-40" />
+                <Skeleton className="h-16 w-full" />
+              </div>
+            </div>
+          </Container>
+        ) : (
+          <div className="flex flex-1 items-center justify-center px-5 py-20 lg:py-40">
+            <StateEmpty
+              icon="cloud"
+              title="상품 정보를 불러오지 못했어요"
+              description="잠시 뒤 다시 열어 주세요"
+              action={{ label: '다시 시도', onClick: () => window.location.reload() }}
+            />
+          </div>
+        )}
+      </main>
+      <SiteFooter hideOnMobile />
+    </div>
+  )
 }
 
 /** 없는 상품 (상태 시안 438:3160) — 판매가 끝났거나 숨긴 상품 링크로 들어왔을 때 */
@@ -290,8 +355,16 @@ function DetailNotFound() {
   )
 }
 
-function DetailView({ product }: { product: Product }) {
-  const detail = useMemo(() => getDetail(product), [product])
+interface DetailViewProps {
+  product: Product
+  /** 생성 상품의 설명 · 스펙 · 리뷰(API) — 없으면 목 데이터 상세 */
+  generated?: ProductDetail
+  /** 생성 상품의 '함께 보면 좋은 상품'(API) */
+  relatedProducts?: Product[]
+}
+
+function DetailView({ product, generated, relatedProducts }: DetailViewProps) {
+  const detail = useMemo(() => getDetail(product, generated), [product, generated])
   const soldOut = !!product.soldOut
   const { colors, sizes } = detail.options
   const wishlist = useWishlist()
@@ -303,14 +376,16 @@ function DetailView({ product }: { product: Product }) {
   const [color, setColor] = useState(colors?.[0]?.name)
   const [size, setSize] = useState(sizes?.find((s) => !s.soldOut)?.name)
   const [quantity, setQuantity] = useState(1)
-  const [tab, setTab] = useState<Tab>('리뷰')
+  // 생성 상품은 AI 리뷰 요약이 아직 없어 Gemini 가 쓴 상품 설명을 먼저 보여 준다
+  const [tab, setTab] = useState<Tab>(generated ? '상품 설명' : '리뷰')
   const [sheetOpen, setSheetOpen] = useState(false)
   const [restockAlert, setRestockAlert] = useState(false)
 
-  const gallery = Array.from({ length: 5 }, () => product.image)
+  // 생성 상품은 고른 사진 1장뿐 — 같은 키워드의 다른 사진은 다른 모델이라 섞지 않는다
+  const gallery = generated ? [product.image] : Array.from({ length: 5 }, () => product.image)
   const optionLabel = [color, size].filter(Boolean).join(' / ') || '기본'
   const total = product.price * quantity
-  const related = ALL_PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4)
+  const related = relatedProducts ?? ALL_PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4)
 
   const addToCart = () => {
     cartActions.add(product, optionLabel, quantity)
@@ -423,7 +498,7 @@ function DetailView({ product }: { product: Product }) {
           <div className="flex flex-col lg:flex-row lg:gap-12">
             {/* 갤러리 — PC 는 썸네일 세로줄 + 큰 사진, 모바일은 옆으로 넘기는 사진 */}
             <div className="hidden shrink-0 gap-3 lg:flex">
-              <div className="flex flex-col gap-2">
+              <div className={`flex-col gap-2 ${gallery.length > 1 ? 'flex' : 'hidden'}`}>
                 {gallery.map((image, i) => (
                   <button
                     key={i}
@@ -452,17 +527,29 @@ function DetailView({ product }: { product: Product }) {
                 ))}
               </div>
               {soldOutBadge}
-              <p className="absolute right-5 bottom-3.5 rounded-full bg-black/35 px-2 py-[3px] text-11 font-medium text-white tabular-nums">
-                {imageIndex + 1} / {gallery.length}
-              </p>
+              {gallery.length > 1 && (
+                <p className="absolute right-5 bottom-3.5 rounded-full bg-black/35 px-2 py-[3px] text-11 font-medium text-white tabular-nums">
+                  {imageIndex + 1} / {gallery.length}
+                </p>
+              )}
             </div>
 
             {/* 구매 정보 */}
             <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-5 lg:gap-4 lg:p-0">
-              <a href={accioHref('/list')} className="flex w-fit items-center gap-0.5 text-13 font-medium text-sub lg:text-14">
-                {product.brand} 브랜드관
-                <img src={chevronRightWeak} alt="" className="size-4" />
-              </a>
+              <div className="flex items-center gap-2">
+                <a href={accioHref('/list')} className="flex w-fit items-center gap-0.5 text-13 font-medium text-sub lg:text-14">
+                  {product.brand} 브랜드관
+                  <img src={chevronRightWeak} alt="" className="size-4" />
+                </a>
+                {generated && (
+                  <span
+                    title="Gemini로 만든 데모용 가상 상품이에요. 실제로 판매하지 않아요"
+                    className="rounded-xs bg-light px-1.5 py-0.5 text-11 font-medium text-sub-weak"
+                  >
+                    데모 상품
+                  </span>
+                )}
+              </div>
               <h1 className="text-20 font-semibold text-main lg:text-24">{detail.title}</h1>
               <p className="flex items-center gap-1.5 lg:gap-2">
                 {product.reviewCount > 0 ? (
